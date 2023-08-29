@@ -11,13 +11,15 @@ public:
   DutyCycleManager(const DutyCycleManager &) = delete;
   DutyCycleManager &operator=(DutyCycleManager &&) = delete;
   DutyCycleManager &operator=(const DutyCycleManager &) = delete;
-  ~DutyCycleManager();
+  ~DutyCycleManager() = default;
 
   void updateIntervalBetweenTx();
+  void beginTx();
   bool canTransmit();
 
-private:
+  // private:
   ArduinoClock::time_point lastTxBegin;
   ArduinoClock::time_point txBegin;
   ArduinoClock::duration txDelay;
+  float dutyCycle;
 };
