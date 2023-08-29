@@ -1,16 +1,17 @@
 #include "Arduino.h"
-#include <cstdint>
-#include <stdlib.h>
-
-int status = 1;
+#include "lora.hpp"
+#include <LoRa.h>
+#include <SPI.h>
+#include <ArduinoClock.hpp>
 
 void setup() {
-    SerialUSB.begin(9600);
+  Serial.begin(9600);
+  while (!Serial) ;
+
 }
 
-    
 void loop() {
-    while (true) {
-        SerialUSB.println("string");
-    }
+  Serial.println(ArduinoClock::now().time_since_epoch().count());
+
+  delay(1000);
 }

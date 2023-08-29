@@ -5,6 +5,9 @@
 all:
 				platformio run
 
+compiledb:
+				pio project init --ide vim --board mkrwan1310
+
 upload:
 				platformio run --target upload
 
