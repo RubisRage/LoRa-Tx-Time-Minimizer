@@ -1,10 +1,13 @@
 #include "lora.hpp"
 #include <Arduino.h>
-#include <LoRa.h>
-#include <SPI.h>
-
 #include <ArduinoClock.hpp>
 #include <DutyCycleManager.hpp>
+#include <LoRa.h>
+#include <SPI.h>
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <string>
 
 using namespace std::chrono_literals;
 
@@ -105,7 +108,8 @@ void setup() {
   setupLora(localNodeConf, onReceive, onTxDone);
 }
 
-void buildPayload(uint8_t *payload, uint8_t &payloadLength) {
+template <size_t size>
+void buildPayload(std::array<uint8_t, size> payload, size_t &payloadLength) {
   payload[payloadLength] = (localNodeConf.bandwidthIndex << 4);
   payload[payloadLength++] |= ((localNodeConf.spreadingFactor - 6) << 1);
   payload[payloadLength] = ((localNodeConf.codingRate - 5) << 6);
@@ -114,29 +118,8 @@ void buildPayload(uint8_t *payload, uint8_t &payloadLength) {
   payload[payloadLength++] = uint8_t(148 + LoRa.packetSnr());
 }
 
-bool canTransmit(bool transmitting, uint32_t lastSendTime_ms,
-                 uint32_t txInterval_ms) {
-  return !transmitting && ((millis() - lastSendTime_ms) > txInterval_ms);
-}
-
 bool doneTransmitting(bool transmitting, bool txDoneFlag) {
   return transmitting && txDoneFlag;
-}
-
-void updateTxInterval(uint32_t txDuration_ms, uint32_t txBegin_ms,
-                      uint32_t &lastSendTime_ms, uint32_t &txInterval_ms) {
-  uint32_t sinceLastMessage_ms = txBegin_ms - lastSendTime_ms;
-  lastSendTime_ms = txBegin_ms;
-  float duty_cycle = (100.0f * txDuration_ms) / sinceLastMessage_ms;
-
-  Serial.print("Duty cycle: ");
-  Serial.print(duty_cycle, 1);
-  Serial.println(" %\n");
-
-  // Solo si el ciclo de trabajo es superior al 1% lo ajustamos
-  if (duty_cycle > 1.0f) {
-    txInterval_ms = txDuration_ms * 100;
-  }
 }
 
 void loop() {
@@ -145,8 +128,10 @@ void loop() {
 
   if (!transmitting && dutyCycleManager.canTransmit()) {
 
-    uint8_t payload[50];
-    uint8_t payloadLength = 0;
+    // uint8_t payload[50];
+    size_t payloadLength = 0;
+
+    std::array<uint8_t, 50> payload;
 
     buildPayload(payload, payloadLength);
 
@@ -159,14 +144,19 @@ void loop() {
     message.type = MessageType::STATUS;
     message.sourceAddress = localAddress;
     message.destinationAddress = remoteAddress;
-    message.payload = payload;
+    message.payload = payload.data();
     message.payloadLength = payloadLength;
 
     sendMessage(message);
     Serial.print("Sending packet ");
     Serial.print(msgCount++);
     Serial.print(": ");
-    printBinaryPayload(payload, payloadLength);
+
+    std::for_each(payload.begin(), payload.begin() + payloadLength,
+                  [](uint8_t e) {
+                    Serial.print(e, HEX);
+                    Serial.print(" ");
+                  });
   }
 
   if (doneTransmitting(transmitting, txDoneFlag)) {
@@ -178,8 +168,7 @@ void loop() {
 
     transmitting = false;
 
-    // Reactivamos la recepción de mensajes, que se desactiva
-    // en segundo plano mientras se transmite
+    /* Enable receiving, which is disabled when transmitting */
     LoRa.receive();
   }
 }

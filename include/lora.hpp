@@ -41,8 +41,8 @@ void sendMessage(Message &message) {
   }
   LoRa.write(message.destinationAddress);
   LoRa.write(message.sourceAddress);
-  LoRa.write((uint8_t)(message.messageId >> 7));
-  LoRa.write((uint8_t)(message.messageId & 0xFF));
+  LoRa.write((uint8_t)(message.id >> 7));
+  LoRa.write((uint8_t)(message.id & 0xFF));
   LoRa.write(message.type);
   LoRa.write(message.payloadLength);
   LoRa.write(message.payload, (size_t)message.payloadLength);
