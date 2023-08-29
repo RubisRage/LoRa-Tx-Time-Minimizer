@@ -128,7 +128,6 @@ void loop() {
 
   if (!transmitting && dutyCycleManager.canTransmit()) {
 
-    // uint8_t payload[50];
     size_t payloadLength = 0;
 
     std::array<uint8_t, 50> payload;
