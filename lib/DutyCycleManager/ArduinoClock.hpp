@@ -11,8 +11,6 @@ struct ArduinoClock {
   static const bool is_steady = true;
 
   static time_point now() {
-    using namespace std::chrono;
-
     return time_point(ArduinoClock::duration{millis()});
   }
 };

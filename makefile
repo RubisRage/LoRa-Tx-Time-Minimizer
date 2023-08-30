@@ -6,22 +6,17 @@ all:
 				platformio run
 
 compiledb:
-				pio project init --ide vim --board mkrwan1310
+				platformio run --target compiledb -e master
 
 upload:
-				platformio run --target upload
+				platformio run --target upload -e master
+				platformio run --target upload -e slave
 
 clean:
 				platformio run --target clean
 
 program:
 				platformio run --target program
-
-monitor:
-				platformio run --target monitor
-
-uploadfs:
-				platformio run --target uploadfs
 
 update:
 				platformio update

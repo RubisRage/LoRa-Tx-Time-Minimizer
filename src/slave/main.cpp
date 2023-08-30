@@ -1,14 +1,13 @@
-#include "lora.hpp"
 #include <Arduino.h>
-#include <LoRa.h>
-#include <SPI.h>
-
 #include <ArduinoClock.hpp>
-#include <DutyCycleManager.hpp>
-
-using namespace std::chrono_literals;
-
-#define INITIAL_INTERVAL_BETWEEN_TX 10000ms
+#include <LoRa.h>
+#include <Logger.hpp>
+#include <LoraHandler.hpp>
+#include <SPI.h>
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <string>
 
 const uint8_t localAddress = 0xB0;
 uint8_t remoteAddress = 0xFF;
@@ -28,8 +27,10 @@ void onReceive(int packetSize) {
   if (transmitting && !txDoneFlag)
     txDoneFlag = true;
 
-  if (packetSize == 0)
+  if (packetSize == 0) {
+    serial.log(LogLevel::WARNING, "\"Received\" empty packet.");
     return;
+  }
 
   Message message;
 
@@ -39,8 +40,8 @@ void onReceive(int packetSize) {
   message.type = MessageType(LoRa.read());
   message.payloadLength = LoRa.read();
 
-  uint8_t payload[10];
-  message.payload = payload;
+  std::array<uint8_t, 10> payload;
+  message.payload = payload.data();
 
   uint8_t receivedBytes = 0;
   while (LoRa.available() && (receivedBytes < uint8_t(sizeof(payload) - 1))) {
@@ -48,26 +49,24 @@ void onReceive(int packetSize) {
   }
 
   if (message.payloadLength != receivedBytes) {
-    Serial.print("Receiving error: declared message length " +
-                 String(message.payloadLength));
-    Serial.println(" does not match length " + String(receivedBytes));
+    serial.log(LogLevel::ERROR,
+               {"Receiving error: declared message length ",
+                String(message.payloadLength).c_str(),
+                " does not match length ", String(receivedBytes).c_str()});
     return;
   }
 
   if ((message.destinationAddress & localAddress) != localAddress) {
-    Serial.println("Receiving error: This message is not for me.");
+    serial.log(LogLevel::WARNING,
+               "Received message was not meant for localhost, dropping.");
     return;
   }
 
-  Serial.println("Received from: 0x" + String(message.sourceAddress, HEX));
-  Serial.println("Sent to: 0x" + String(message.destinationAddress, HEX));
-  Serial.println("Message ID: " + String(message.id));
-  Serial.println("Payload length: " + String(message.payloadLength));
-  Serial.print("Payload: ");
-  printBinaryPayload(message.payload, receivedBytes);
-  Serial.print("\nRSSI: " + String(LoRa.packetRssi()));
-  Serial.print(" dBm\nSNR: " + String(LoRa.packetSnr()));
-  Serial.println(" dB");
+  serial.log(LogLevel::INFORMATION, "Received message", message);
+
+  serial.log(LogLevel::INFORMATION,
+             {"Local RSSI:", String(LoRa.packetRssi()).c_str(),
+              "dBm, Local SNR:", String(LoRa.packetSnr()).c_str(), "dB"});
 
   if (receivedBytes == 4) {
     remoteNodeConf.bandwidthIndex = payload[0] >> 4;
@@ -77,23 +76,13 @@ void onReceive(int packetSize) {
     remoteRSSI = -int(payload[2]) / 2.0f;
     remoteSNR = int(payload[3]) - 148;
 
-    Serial.print("Remote config: BW: ");
-    Serial.print(bandwidth_kHz[remoteNodeConf.bandwidthIndex]);
-    Serial.print(" kHz, SPF: ");
-    Serial.print(remoteNodeConf.spreadingFactor);
-    Serial.print(", CR: ");
-    Serial.print(remoteNodeConf.codingRate);
-    Serial.print(", TxPwr: ");
-    Serial.print(remoteNodeConf.txPower);
-    Serial.print(" dBm, RSSI: ");
-    Serial.print(remoteRSSI);
-    Serial.print(" dBm, SNR: ");
-    Serial.print(remoteSNR, 1);
-    Serial.println(" dB\n");
+    serial.log(LogLevel::INFORMATION, "Remote node config:", remoteNodeConf);
+    serial.log(LogLevel::INFORMATION,
+               {"Remote RSSI:", String(remoteRSSI).c_str(),
+                "dBm, Remote SNR:", String(remoteRSSI).c_str(), "dB"});
   } else {
-    Serial.print("Unexpected payload size: ");
-    Serial.print(receivedBytes);
-    Serial.println(" bytes\n");
+    serial.log(LogLevel::ERROR, {"Unexpected payload size: ",
+                                 String(receivedBytes).c_str(), "bytes"});
   }
 }
 
@@ -102,10 +91,22 @@ void setup() {
   while (!Serial)
     ;
 
-  setupLora(localNodeConf, onReceive, onTxDone);
+  while (Serial.read() != 's')
+    ;
+
+  if (!LoRa.begin(868E6)) {
+    serial.log(LogLevel::FAILURE, "LoRa init failed. Check your connections.");
+    while (true)
+      ;
+  }
+
+  loraHandler.setup(localNodeConf, onReceive);
+
+  serial.log(LogLevel::INFORMATION, "SLAVE SETUP CORRECTLY");
 }
 
-void buildPayload(uint8_t *payload, uint8_t &payloadLength) {
+template <size_t size>
+void buildPayload(std::array<uint8_t, size> payload, size_t &payloadLength) {
   payload[payloadLength] = (localNodeConf.bandwidthIndex << 4);
   payload[payloadLength++] |= ((localNodeConf.spreadingFactor - 6) << 1);
   payload[payloadLength] = ((localNodeConf.codingRate - 5) << 6);
@@ -114,72 +115,35 @@ void buildPayload(uint8_t *payload, uint8_t &payloadLength) {
   payload[payloadLength++] = uint8_t(148 + LoRa.packetSnr());
 }
 
-bool canTransmit(bool transmitting, uint32_t lastSendTime_ms,
-                 uint32_t txInterval_ms) {
-  return !transmitting && ((millis() - lastSendTime_ms) > txInterval_ms);
-}
-
 bool doneTransmitting(bool transmitting, bool txDoneFlag) {
   return transmitting && txDoneFlag;
 }
 
-void updateTxInterval(uint32_t txDuration_ms, uint32_t txBegin_ms,
-                      uint32_t &lastSendTime_ms, uint32_t &txInterval_ms) {
-  uint32_t sinceLastMessage_ms = txBegin_ms - lastSendTime_ms;
-  lastSendTime_ms = txBegin_ms;
-  float duty_cycle = (100.0f * txDuration_ms) / sinceLastMessage_ms;
-
-  Serial.print("Duty cycle: ");
-  Serial.print(duty_cycle, 1);
-  Serial.println(" %\n");
-
-  // Solo si el ciclo de trabajo es superior al 1% lo ajustamos
-  if (duty_cycle > 1.0f) {
-    txInterval_ms = txDuration_ms * 100;
-  }
-}
-
 void loop() {
-  static DutyCycleManager dutyCycleManager(INITIAL_INTERVAL_BETWEEN_TX);
   static uint16_t msgCount = 0;
 
-  if (!transmitting && dutyCycleManager.canTransmit()) {
+  if (loraHandler.canTransmit()) {
 
-    uint8_t payload[50];
-    uint8_t payloadLength = 0;
+    size_t payloadLength = 0;
+
+    std::array<uint8_t, 50> payload;
 
     buildPayload(payload, payloadLength);
 
     transmitting = true;
     txDoneFlag = false;
-    dutyCycleManager.beginTx();
 
     Message message;
     message.id = msgCount;
     message.type = MessageType::STATUS;
     message.sourceAddress = localAddress;
     message.destinationAddress = remoteAddress;
-    message.payload = payload;
+    message.payload = payload.data();
     message.payloadLength = payloadLength;
 
-    sendMessage(message);
-    Serial.print("Sending packet ");
-    Serial.print(msgCount++);
-    Serial.print(": ");
-    printBinaryPayload(payload, payloadLength);
+    loraHandler.sendMessage(message);
+    serial.log(LogLevel::INFORMATION, "Sending message: ", message);
   }
 
-  if (doneTransmitting(transmitting, txDoneFlag)) {
-
-    dutyCycleManager.updateIntervalBetweenTx();
-
-    Serial.print("Duty cycle: ");
-    Serial.println(dutyCycleManager.dutyCycle);
-
-    transmitting = false;
-
-    // Reactivamos la recepción de mensajes, que se desactiva
-    // en segundo plano mientras se transmite
-    LoRa.receive();
-  }
+  loraHandler.updateTransmissionState();
 }
