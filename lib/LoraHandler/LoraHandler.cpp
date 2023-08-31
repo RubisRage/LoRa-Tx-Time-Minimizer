@@ -1,4 +1,6 @@
 #include "LoraHandler.hpp"
+#include "api/Compat.h"
+#include "variant.h"
 #include <LoRa.h>
 #include <Logger.hpp>
 #include <functional>
@@ -42,7 +44,10 @@ void LoraHandler::setup(LoRaConfig &config, void (*onReceive)(int)) {
   LoRa.setSyncWord(0x12);
   LoRa.setPreambleLength(8);
   LoRa.onReceive(onReceive);
-  LoRa.onTxDone([] { loraHandler.txDone = true; });
+  LoRa.onTxDone([] {
+    loraHandler.txDone = true;
+    digitalWrite(LED_BUILTIN, HIGH);
+  });
 
   LoRa.receive();
 }
@@ -58,20 +63,16 @@ void LoraHandler::updateConfig(LoRaConfig &config) {
 
 void LoraHandler::updateTransmissionState() {
 
-#ifdef DEBUG
+#ifdef DEBUG_LOG
   serial.log(LogLevel::DEBUG, {"Transmitting:", String(transmitting).c_str(),
                                "TxDone:", String(txDone).c_str()});
-#endif // DEBUG
+#endif // DEBUG_LOG
 
   if (transmitting && txDone) {
 
     transmitting = false;
 
     dutyCycleManager.updateIntervalBetweenTx();
-
-    serial.log(
-        LogLevel::INFORMATION,
-        {"Duty cycle: ", String(dutyCycleManager.dutyCycle).c_str(), "%"});
 
     /* Enable receiving, which is disabled when transmitting */
     LoRa.receive();
@@ -84,5 +85,5 @@ bool LoraHandler::canTransmit() {
 
 /* Global definitions (extern) */
 LoraHandler loraHandler;
-double bandwidth_kHz[] = {7.8E3,  10.4E3, 15.6E3, 20.8E3, 31.25E3,
-                          41.7E3, 62.5E3, 125E3,  250E3,  500E3};
+std::array<double, 10> bandwidth_kHz = {7.8E3,  10.4E3, 15.6E3, 20.8E3, 31.25E3,
+                                        41.7E3, 62.5E3, 125E3,  250E3,  500E3};

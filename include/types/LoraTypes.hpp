@@ -1,9 +1,10 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 
 /* Possible bandwidths */
-extern double bandwidth_kHz[];
+extern std::array<double, 10> bandwidth_kHz;
 
 struct LoRaConfig {
   uint8_t bandwidthIndex;

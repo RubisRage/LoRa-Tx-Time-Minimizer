@@ -107,6 +107,7 @@ void setup() {
   loraHandler.setup(localNodeConf, onReceive);
 
   serial.log(LogLevel::INFORMATION, "MASTER SETUP CORRECTLY");
+  serial.printLegend();
 }
 
 template <size_t size>
@@ -138,7 +139,7 @@ void loop() {
     txDoneFlag = false;
 
     Message message;
-    message.id = msgCount;
+    message.id = msgCount++;
     message.type = MessageType::STATUS;
     message.sourceAddress = localAddress;
     message.destinationAddress = remoteAddress;

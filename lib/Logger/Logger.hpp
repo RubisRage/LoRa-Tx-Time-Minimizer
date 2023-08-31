@@ -2,7 +2,7 @@
 #include <types/LoraTypes.hpp>
 #include <types/Message.hpp>
 
-enum LogLevel { FAILURE, ERROR, WARNING, INFORMATION, DEBUG };
+enum LogLevel { FAILURE, ERROR, WARNING, INFORMATION, STATISTICS, DEBUG };
 
 class Logger {
 public:

@@ -1,4 +1,5 @@
 #include "Logger.hpp"
+#include "types/LoraTypes.hpp"
 #include <Arduino.h>
 #include <algorithm>
 #include <string>
@@ -8,6 +9,7 @@ static const char *levelIndicators[] = {
     "(EE)", /* LogLevel::ERROR */
     "(WW)", /* LogLevel::WARNING */
     "(II)", /* LogLevel::INFORMATION */
+    "(SS)", /* LogLevel::STATISTICS */
     "(DD)", /* LogLevel::DEBUG */
 };
 
@@ -16,6 +18,7 @@ static const char *levelLegends[] = {
     "Error",            /* LogLevel::ERROR */
     "Warning",          /* LogLevel::WARNING */
     "Information",      /* LogLevel::INFORMATION */
+    "Statistics",       /* LogLevel::STATISTICS */
     "Debug",            /* LogLevel::INFORMATION */
 };
 
@@ -52,26 +55,33 @@ void Logger::log(LogLevel level, const char *logMessage, Message message) {
 
   log(level, logMessage);
 
-  Serial.println("\tSender address: 0x" + String(message.sourceAddress, HEX));
-  Serial.println("\tRecipient address: 0x" +
+  Serial.println("{");
+  Serial.println("\t\tSender address: 0x" + String(message.sourceAddress, HEX));
+  Serial.println("\t\tRecipient address: 0x" +
                  String(message.destinationAddress, HEX));
-  Serial.println("\tMessage ID:" + String(message.id));
-  Serial.println("\tPayload length:" + String(message.payloadLength));
-  Serial.print("\tPayload:");
+  Serial.println("\t\tMessage ID:" + String(message.id));
+  Serial.println("\t\tPayload length:" + String(message.payloadLength));
+  Serial.print("\t\tPayload:");
 
   for (int i = 0; i < message.payloadLength; i++) {
     Serial.print(message.payload[i], HEX);
     Serial.print(" ");
   }
 
-  Serial.println();
+  Serial.println("\n{");
 }
 
 void Logger::log(LogLevel level, const char *logMessage, LoRaConfig config) {
   log(level, logMessage, " ");
 
   Serial.print("{ BW: ");
-  Serial.print(bandwidth_kHz[config.bandwidthIndex]);
+
+  if (config.bandwidthIndex < bandwidth_kHz.size()) {
+    Serial.print(bandwidth_kHz[config.bandwidthIndex]);
+  } else {
+    Serial.print("[Unexpected bandiwdth index]");
+  }
+
   Serial.print(" kHz, SPF: ");
   Serial.print(config.spreadingFactor);
   Serial.print(", CR: ");
@@ -82,6 +92,9 @@ void Logger::log(LogLevel level, const char *logMessage, LoRaConfig config) {
 }
 
 void Logger::printLegend() {
+
+  Serial.println("Log legend\n");
+
   for (size_t i = 0; i < sizeof(levelIndicators) / sizeof(const char *); i++) {
     Serial.print(levelIndicators[i]);
     Serial.print(": ");

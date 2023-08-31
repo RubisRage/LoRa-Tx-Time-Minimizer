@@ -11,11 +11,15 @@ void DutyCycleManager::updateIntervalBetweenTx() {
   lastTxBegin = txBegin;
   dutyCycle = 100.0f * txDuration / sinceLastMessage;
 
-  Serial.print("----> TX completed in ");
-  Serial.print(txDuration.count());
-  Serial.println(" msecs");
+  serial.log(
+      LogLevel::STATISTICS,
+      {"Tx completed in", String((int)txDuration.count()).c_str(), "ms"});
+
+  serial.log(LogLevel::STATISTICS,
+             {"Duty cycle is", String(dutyCycle).c_str(), "%"});
 
   if (dutyCycle > 1.0f) {
+    serial.log(LogLevel::WARNING, {"Duty cycle exceeded 1%, adjusting."});
     txDelay = txDuration * 100;
   }
 }
