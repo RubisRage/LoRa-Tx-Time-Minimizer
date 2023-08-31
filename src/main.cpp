@@ -1,18 +1,19 @@
 #include <Arduino.h>
-#include <ArduinoClock.hpp>
+#include <DutyCycleManager/ArduinoClock.hpp>
 #include <LoRa.h>
-#include <Logger.hpp>
-#include <LoraHandler.hpp>
+#include <LoraHandler/LoraHandler.hpp>
 #include <SPI.h>
+#include <StateMachine/StateMachine.hpp>
 #include <algorithm>
 #include <array>
 #include <cstdint>
 #include <string>
 
+#include "states.hpp"
+
 const uint8_t localAddress = 0xB0;
 uint8_t remoteAddress = 0xFF;
 
-LoRaConfig localNodeConf = defaultConfig;
 LoRaConfig remoteNodeConf;
 
 int remoteRSSI = 0;
@@ -36,9 +37,13 @@ void onReceive(int packetSize) {
   message.payload = payload.data();
 
   uint8_t receivedBytes = 0;
-  while (LoRa.available() && (receivedBytes < uint8_t(sizeof(payload) - 1))) {
+  while (LoRa.available() && (receivedBytes < uint8_t(payload.size() - 1)) &&
+         receivedBytes < message.payloadLength) {
     payload[receivedBytes++] = (char)LoRa.read();
   }
+
+  while (LoRa.available())
+    LoRa.read();
 
   if (message.payloadLength != receivedBytes) {
     serial.log(LogLevel::ERROR, "Receiving error: declared message length ",
@@ -52,7 +57,7 @@ void onReceive(int packetSize) {
     return;
   }
 
-  serial.log(LogLevel::INFORMATION, "Received message:", message);
+  serial.log(LogLevel::INFORMATION, "Received message", message);
 
   serial.log(LogLevel::INFORMATION, "Local RSSI:", LoRa.packetRssi(),
              "dBm, Local SNR:", LoRa.packetSnr(), "dB");
@@ -88,46 +93,14 @@ void setup() {
       ;
   }
 
-  loraHandler.setup(localNodeConf, onReceive);
+  loraHandler.setup(defaultConfig, onReceive);
 
-  serial.log(LogLevel::INFORMATION, "SLAVE SETUP CORRECTLY");
+  serial.log(LogLevel::INFORMATION, "MASTER SETUP CORRECTLY");
   serial.printLegend();
 }
 
-template <size_t size>
-void buildPayload(std::array<uint8_t, size> payload, size_t &payloadLength) {
-  payload[payloadLength] = localNodeConf.bandwidthIndex << 4;
-  payload[payloadLength++] |= 0x0F & localNodeConf.spreadingFactor;
-  payload[payloadLength] = (localNodeConf.codingRate - 5) << 6;
-  payload[payloadLength++] |= localNodeConf.txPower << 1;
-  payload[payloadLength++] = uint8_t(-LoRa.packetRssi() * 2);
-  payload[payloadLength++] = uint8_t(148 + LoRa.packetSnr());
-}
-
 void loop() {
-  static uint16_t msgCount = 0;
+  static TestState s(1, "TestState");
 
-  /*
-  if (loraHandler.canTransmit()) {
-
-    size_t payloadLength = 0;
-
-    std::array<uint8_t, 50> payload;
-
-    buildPayload(payload, payloadLength);
-
-    Message message;
-    message.id = msgCount++;
-    message.type = MessageType::STATUS;
-    message.sourceAddress = localAddress;
-    message.destinationAddress = remoteAddress;
-    message.payload = payload.data();
-    message.payloadLength = payloadLength;
-
-    loraHandler.sendMessage(message);
-    serial.log(LogLevel::INFORMATION, "Sending message: ", message);
-  }
-  */
-
-  loraHandler.updateTransmissionState();
+  s.execute();
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 #include <initializer_list>
 #include <types/LoraTypes.hpp>
@@ -22,6 +24,9 @@ public:
    *
    * WARNING: This function is recursive, specifying a long enough msgs list
    * could result in stack overflow.
+   *
+   * WARNING: Attempting to log values not supported by Arduino's Serial.print
+   * function will result in compilation errors.
    */
   template <typename... Printable> void log(LogLevel level, Printable... msgs) {
     printLabel(level);

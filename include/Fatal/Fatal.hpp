@@ -1,0 +1,5 @@
+
+
+namespace Fatal {
+void exit();
+}

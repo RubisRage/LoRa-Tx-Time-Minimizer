@@ -1,6 +1,6 @@
-#include "Logger.hpp"
 #include "types/LoraTypes.hpp"
 #include <Arduino.h>
+#include <Logger/Logger.hpp>
 #include <algorithm>
 #include <string>
 
@@ -36,33 +36,6 @@ void Logger::log(LogLevel level, const char *logMessage, const char *end) {
   Serial.print(logMessage);
   Serial.print(end);
 }
-
-/*
-void Logger::log(LogLevel level, Printable... msgs, const char *separator,
-                 const char *end) {
-template <typename... Printable>
-void Logger::log(LogLevel level, Printable... msgs) {
-  printLabel(level);
-
-  for (const auto p : {msgs...}) {
-    Serial.print(p);
-    Serial.print(" ");
-  }
-
-  auto current = logMessages.begin();
-
-  while (current != logMessages.end()) {
-    Serial.print(*current);
-
-    if (current != logMessages.end() - 1)
-      Serial.print(separator);
-
-    current++;
-  }
-
-Serial.print('\n');
-}
-*/
 
 void Logger::log(LogLevel level, const char *logMessage, Message message) {
   log(level, logMessage);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <DutyCycleManager.hpp>
+#include <DutyCycleManager/DutyCycleManager.hpp>
 #include <cstdint>
 #include <types/LoraTypes.hpp>
 #include <types/Message.hpp>

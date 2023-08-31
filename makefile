@@ -7,7 +7,7 @@ all:
 				platformio run -e slave
 
 compiledb:
-				platformio run --target compiledb -e master
+				platformio run --target compiledb
 
 upload:
 				platformio run --target upload -e master

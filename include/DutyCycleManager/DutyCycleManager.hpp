@@ -1,4 +1,4 @@
-#include <ArduinoClock.hpp>
+#include <DutyCycleManager/ArduinoClock.hpp>
 #include <cstdint>
 
 /**

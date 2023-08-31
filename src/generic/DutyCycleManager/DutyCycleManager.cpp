@@ -1,5 +1,5 @@
-#include <DutyCycleManager.hpp>
-#include <Logger.hpp>
+#include <DutyCycleManager/DutyCycleManager.hpp>
+#include <Logger/Logger.hpp>
 
 DutyCycleManager::DutyCycleManager(ArduinoClock::duration initialTxDelay)
     : lastTxBegin(), txBegin(), txDelay(initialTxDelay), dutyCycle() {}
