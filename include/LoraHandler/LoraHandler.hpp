@@ -49,11 +49,21 @@ public:
    */
   bool canTransmit();
 
-  // private:
+  /**
+   * Get last received message.
+   *
+   * @return true if returned message is valid, false otherwise.
+   */
+  bool get(Message &);
 
+private:
+  Message lastReceived;
+  bool validMessage;
   DutyCycleManager dutyCycleManager;
   volatile bool transmitting;
   volatile bool txDone;
+
+  void onReceive(int packetSize);
 };
 
 extern LoraHandler loraHandler;

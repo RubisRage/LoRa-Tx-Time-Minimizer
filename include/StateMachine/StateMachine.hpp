@@ -30,7 +30,8 @@ private:
 
 public:
   StateMachine(State *initial) : currentState(initial) {
-    transitionTable.fill(nullptr);
+    for (auto &stateTransitions : transitionTable)
+      stateTransitions.fill(nullptr);
   }
 
   ~StateMachine() = default;
@@ -76,5 +77,5 @@ public:
     }
   }
 
-  const State &getState() { return *currentState; }
+  State &getState() { return *currentState; }
 };

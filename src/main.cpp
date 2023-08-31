@@ -11,6 +11,15 @@
 
 #include "states.hpp"
 
+#ifdef MASTER_BOARD
+auto &stateMachine = initializeMasterStateMachine();
+#endif
+
+#ifdef SLAVE_BOARD
+auto &stateMachine = initializeSlaveStateMachine();
+#endif
+
+/*
 const uint8_t localAddress = 0xB0;
 uint8_t remoteAddress = 0xFF;
 
@@ -37,13 +46,9 @@ void onReceive(int packetSize) {
   message.payload = payload.data();
 
   uint8_t receivedBytes = 0;
-  while (LoRa.available() && (receivedBytes < uint8_t(payload.size() - 1)) &&
-         receivedBytes < message.payloadLength) {
+  while (LoRa.available() && (receivedBytes < payload.size())) {
     payload[receivedBytes++] = (char)LoRa.read();
   }
-
-  while (LoRa.available())
-    LoRa.read();
 
   if (message.payloadLength != receivedBytes) {
     serial.log(LogLevel::ERROR, "Receiving error: declared message length ",
@@ -79,6 +84,8 @@ void onReceive(int packetSize) {
   }
 }
 
+*/
+
 void setup() {
   Serial.begin(115200);
   while (!Serial)
@@ -89,18 +96,24 @@ void setup() {
 
   if (!LoRa.begin(868E6)) {
     serial.log(LogLevel::FAILURE, "LoRa init failed. Check your connections.");
-    while (true)
-      ;
+    Fatal::exit();
   }
 
-  loraHandler.setup(defaultConfig, onReceive);
+  loraHandler.setup(defaultConfig, nullptr);
 
+#ifdef MASTER_BOARD
   serial.log(LogLevel::INFORMATION, "MASTER SETUP CORRECTLY");
+#endif
+
+#ifdef SLAVE_BOARD
+  serial.log(LogLevel::INFORMATION, "SLAVE SETUP CORRECTLY");
+#endif
+
+  serial.log(LogLevel::INFORMATION, "Press s to start execution.");
   serial.printLegend();
 }
 
 void loop() {
-  static TestState s(1, "TestState");
-
-  s.execute();
+  stateMachine.getState().execute();
+  loraHandler.updateTransmissionState();
 }

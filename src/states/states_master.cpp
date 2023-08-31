@@ -1,9 +1,9 @@
-#include "states.hpp"
+#include "states/states_master.hpp"
 #include "LoRa.h"
+#include "StateMachine/StateMachine.hpp"
+#include "states.hpp"
 #include <LoraHandler/LoraHandler.hpp>
-
-const uint8_t localAddress = 0xB0;
-static uint8_t remoteAddress = 0xFF;
+#include <globals/globals.hpp>
 
 LoRaConfig localNodeConf = defaultConfig;
 
@@ -50,4 +50,13 @@ void TestState::execute() {
   }
 
   loraHandler.updateTransmissionState();
+}
+
+
+TestState testState(1, "Test state");
+
+StateMachine<1, 0> masterStateMachine(&testState);
+
+StateMachine<1, 0> &initializeMasterStateMachine() {
+    return masterStateMachine;
 }

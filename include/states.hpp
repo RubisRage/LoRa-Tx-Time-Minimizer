@@ -1,11 +1,11 @@
 #pragma once
 
 #ifdef MASTER_BOARD
-#include "master/states.hpp"
+#include <states/states_master.hpp>
 #endif
 
 #ifdef SLAVE_BOARD
-#include "slave/states.hpp"
+#include "states/states_slave.hpp"
 #endif
 
 #if !(defined(MASTER_BOARD) || defined(SLAVE_BOARD))
