@@ -20,7 +20,7 @@ static std::array<Level, 6> levels = {
 
 Logger::Logger() {}
 
-void printLabel(LogLevel level) {
+void Logger::printLabel(LogLevel level) {
 
   if (level < levels.size()) {
     Serial.print(levels[level].label);
@@ -37,10 +37,17 @@ void Logger::log(LogLevel level, const char *logMessage, const char *end) {
   Serial.print(end);
 }
 
-void Logger::log(LogLevel level,
-                 const std::initializer_list<const char *> &logMessages,
-                 const char *separator, const char *end) {
+/*
+void Logger::log(LogLevel level, Printable... msgs, const char *separator,
+                 const char *end) {
+template <typename... Printable>
+void Logger::log(LogLevel level, Printable... msgs) {
   printLabel(level);
+
+  for (const auto p : {msgs...}) {
+    Serial.print(p);
+    Serial.print(" ");
+  }
 
   auto current = logMessages.begin();
 
@@ -53,11 +60,11 @@ void Logger::log(LogLevel level,
     current++;
   }
 
-  Serial.print(end);
+Serial.print('\n');
 }
+*/
 
 void Logger::log(LogLevel level, const char *logMessage, Message message) {
-
   log(level, logMessage);
 
   Serial.println("{");
@@ -97,7 +104,6 @@ void Logger::log(LogLevel level, const char *logMessage, LoRaConfig config) {
 }
 
 void Logger::printLegend() {
-
   Serial.println("Log legend\n");
 
   for (size_t i = 0; i < sizeof(levels) / sizeof(Level); i++) {

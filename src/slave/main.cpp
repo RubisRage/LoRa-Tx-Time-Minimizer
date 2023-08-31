@@ -41,10 +41,8 @@ void onReceive(int packetSize) {
   }
 
   if (message.payloadLength != receivedBytes) {
-    serial.log(LogLevel::ERROR,
-               {"Receiving error: declared message length ",
-                String(message.payloadLength).c_str(),
-                " does not match length ", String(receivedBytes).c_str()});
+    serial.log(LogLevel::ERROR, "Receiving error: declared message length ",
+               message.payloadLength, " does not match length ", receivedBytes);
     return;
   }
 
@@ -56,9 +54,8 @@ void onReceive(int packetSize) {
 
   serial.log(LogLevel::INFORMATION, "Received message:", message);
 
-  serial.log(LogLevel::INFORMATION,
-             {"Local RSSI:", String(LoRa.packetRssi()).c_str(),
-              "dBm, Local SNR:", String(LoRa.packetSnr()).c_str(), "dB"});
+  serial.log(LogLevel::INFORMATION, "Local RSSI:", LoRa.packetRssi(),
+             "dBm, Local SNR:", LoRa.packetSnr(), "dB");
 
   if (receivedBytes == 4) {
     remoteNodeConf.bandwidthIndex = payload[0] >> 4;
@@ -69,12 +66,11 @@ void onReceive(int packetSize) {
     remoteSNR = int(payload[3]) - 148;
 
     serial.log(LogLevel::INFORMATION, "Remote node config:", remoteNodeConf);
-    serial.log(LogLevel::INFORMATION,
-               {"Remote RSSI:", String(remoteRSSI).c_str(),
-                "dBm, Remote SNR:", String(remoteRSSI).c_str(), "dB"});
+    serial.log(LogLevel::INFORMATION, "Remote RSSI:", remoteRSSI,
+               "dBm, Remote SNR:", remoteSNR, "dB");
   } else {
-    serial.log(LogLevel::ERROR, {"Unexpected payload size: ",
-                                 String(receivedBytes).c_str(), "bytes"});
+    serial.log(LogLevel::ERROR, "Unexpected payload size: ", receivedBytes,
+               "bytes");
   }
 }
 
