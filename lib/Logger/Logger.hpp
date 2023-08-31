@@ -15,7 +15,7 @@ public:
   Logger &operator=(const Logger &) = delete;
 
   void log(LogLevel, const char *, const char *endStr = "\n");
-  void log(LogLevel, std::initializer_list<const char *>,
+  void log(LogLevel, const std::initializer_list<const char *> &,
            const char *separator = " ", const char *endStr = "\n");
 
   void log(LogLevel, const char *, Message);

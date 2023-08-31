@@ -12,21 +12,13 @@
 const uint8_t localAddress = 0xB0;
 uint8_t remoteAddress = 0xFF;
 
-volatile bool txDoneFlag = true;
-volatile bool transmitting = false;
-
 LoRaConfig localNodeConf = defaultConfig;
 LoRaConfig remoteNodeConf;
 
 int remoteRSSI = 0;
 float remoteSNR = 0;
 
-void onTxDone() { txDoneFlag = true; }
-
 void onReceive(int packetSize) {
-  if (transmitting && !txDoneFlag)
-    txDoneFlag = true;
-
   if (packetSize == 0) {
     serial.log(LogLevel::WARNING, "\"Received\" empty packet.");
     return;
@@ -62,7 +54,7 @@ void onReceive(int packetSize) {
     return;
   }
 
-  serial.log(LogLevel::INFORMATION, "Received message", message);
+  serial.log(LogLevel::INFORMATION, "Received message:", message);
 
   serial.log(LogLevel::INFORMATION,
              {"Local RSSI:", String(LoRa.packetRssi()).c_str(),
@@ -108,21 +100,18 @@ void setup() {
 
 template <size_t size>
 void buildPayload(std::array<uint8_t, size> payload, size_t &payloadLength) {
-  payload[payloadLength] = (localNodeConf.bandwidthIndex << 4);
-  payload[payloadLength++] |= ((localNodeConf.spreadingFactor - 6) << 1);
-  payload[payloadLength] = ((localNodeConf.codingRate - 5) << 6);
-  payload[payloadLength++] |= ((localNodeConf.txPower - 2) << 1);
+  payload[payloadLength] = localNodeConf.bandwidthIndex << 4;
+  payload[payloadLength++] |= 0x0F & localNodeConf.spreadingFactor;
+  payload[payloadLength] = (localNodeConf.codingRate - 5) << 6;
+  payload[payloadLength++] |= localNodeConf.txPower << 1;
   payload[payloadLength++] = uint8_t(-LoRa.packetRssi() * 2);
   payload[payloadLength++] = uint8_t(148 + LoRa.packetSnr());
-}
-
-bool doneTransmitting(bool transmitting, bool txDoneFlag) {
-  return transmitting && txDoneFlag;
 }
 
 void loop() {
   static uint16_t msgCount = 0;
 
+  /*
   if (loraHandler.canTransmit()) {
 
     size_t payloadLength = 0;
@@ -130,9 +119,6 @@ void loop() {
     std::array<uint8_t, 50> payload;
 
     buildPayload(payload, payloadLength);
-
-    transmitting = true;
-    txDoneFlag = false;
 
     Message message;
     message.id = msgCount++;
@@ -145,6 +131,7 @@ void loop() {
     loraHandler.sendMessage(message);
     serial.log(LogLevel::INFORMATION, "Sending message: ", message);
   }
+  */
 
   loraHandler.updateTransmissionState();
 }

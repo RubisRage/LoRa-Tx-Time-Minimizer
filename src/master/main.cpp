@@ -12,21 +12,13 @@
 const uint8_t localAddress = 0xB0;
 uint8_t remoteAddress = 0xFF;
 
-volatile bool txDoneFlag = true;
-volatile bool transmitting = false;
-
 LoRaConfig localNodeConf = defaultConfig;
 LoRaConfig remoteNodeConf;
 
 int remoteRSSI = 0;
 float remoteSNR = 0;
 
-void onTxDone() { txDoneFlag = true; }
-
 void onReceive(int packetSize) {
-  if (transmitting && !txDoneFlag)
-    txDoneFlag = true;
-
   if (packetSize == 0) {
     serial.log(LogLevel::WARNING, "\"Received\" empty packet.");
     return;
@@ -111,17 +103,21 @@ void setup() {
 }
 
 template <size_t size>
-void buildPayload(std::array<uint8_t, size> payload, size_t &payloadLength) {
+void buildPayload(std::array<uint8_t, size> &payload, size_t &payloadLength) {
+#ifdef DEBUG_LOG
+  serial.log(LogLevel::DEBUG, {"Start build:", String(payloadLength).c_str()});
+#endif // DEBUG
+
   payload[payloadLength] = (localNodeConf.bandwidthIndex << 4);
   payload[payloadLength++] |= ((localNodeConf.spreadingFactor - 6) << 1);
   payload[payloadLength] = ((localNodeConf.codingRate - 5) << 6);
   payload[payloadLength++] |= ((localNodeConf.txPower - 2) << 1);
   payload[payloadLength++] = uint8_t(-LoRa.packetRssi() * 2);
   payload[payloadLength++] = uint8_t(148 + LoRa.packetSnr());
-}
 
-bool doneTransmitting(bool transmitting, bool txDoneFlag) {
-  return transmitting && txDoneFlag;
+#ifdef DEBUG_LOG
+  serial.log(LogLevel::DEBUG, {"End build:", String(payloadLength).c_str()});
+#endif // DEBUG
 }
 
 void loop() {
@@ -134,9 +130,6 @@ void loop() {
     std::array<uint8_t, 50> payload;
 
     buildPayload(payload, payloadLength);
-
-    transmitting = true;
-    txDoneFlag = false;
 
     Message message;
     message.id = msgCount++;

@@ -63,11 +63,6 @@ void LoraHandler::updateConfig(LoRaConfig &config) {
 
 void LoraHandler::updateTransmissionState() {
 
-#ifdef DEBUG_LOG
-  serial.log(LogLevel::DEBUG, {"Transmitting:", String(transmitting).c_str(),
-                               "TxDone:", String(txDone).c_str()});
-#endif // DEBUG_LOG
-
   if (transmitting && txDone) {
 
     transmitting = false;

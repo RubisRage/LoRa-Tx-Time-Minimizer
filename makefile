@@ -12,6 +12,10 @@ upload:
 				platformio run --target upload -e master
 				platformio run --target upload -e slave
 
+updb:
+				platformio run --target upload -e master_debug
+				platformio run --target upload -e slave_debug
+
 clean:
 				platformio run --target clean
 
