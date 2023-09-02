@@ -10,9 +10,11 @@ private:
 
 public:
   StateMachine(const State *initial) : currentState(initial) {
-    serial.log(LogLevel::INFORMATION,
-               "State machine initialized with starting state",
-               currentState->name);
+    /*
+  serial.log(LogLevel::INFORMATION,
+             "State machine initialized with starting state",
+             currentState->name);
+    */
   }
 
   ~StateMachine() = default;

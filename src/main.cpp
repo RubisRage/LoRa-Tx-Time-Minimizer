@@ -6,11 +6,14 @@
 
 void setup() {
   Serial.begin(115200);
-  while (!Serial)
-    ;
+  while (!Serial) {
+  }
 
-  while (Serial.read() != 's')
-    ;
+  serial.printLegend();
+  serial.log(LogLevel::INFORMATION, "Press s to start execution.");
+
+  while (Serial.read() != 's') {
+  }
 
   if (!LoRa.begin(868E6)) {
     serial.log(LogLevel::FAILURE, "LoRa init failed. Check your connections.");
@@ -26,9 +29,6 @@ void setup() {
 #ifdef SLAVE_BOARD
   serial.log(LogLevel::INFORMATION, "SLAVE SETUP CORRECTLY");
 #endif
-
-  serial.log(LogLevel::INFORMATION, "Press s to start execution.");
-  serial.printLegend();
 }
 
 void loop() {
