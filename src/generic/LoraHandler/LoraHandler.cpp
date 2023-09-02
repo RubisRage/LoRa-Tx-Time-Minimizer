@@ -32,7 +32,7 @@ bool LoraHandler::sendMessage(Message message) {
   return true;
 }
 
-void LoraHandler::setup(LoRaConfig &config, void (*onReceive)(int)) {
+void LoraHandler::setup(const LoRaConfig &config, void (*onReceive)(int)) {
   LoRa.setSyncWord(0x12);
   LoRa.setPreambleLength(8);
   LoRa.onReceive([](int packetSize) { loraHandler.onReceive(packetSize); });
@@ -41,7 +41,7 @@ void LoraHandler::setup(LoRaConfig &config, void (*onReceive)(int)) {
   updateConfig(config);
 }
 
-void LoraHandler::updateConfig(LoRaConfig &config) {
+void LoraHandler::updateConfig(const LoRaConfig &config) {
   LoRa.setSignalBandwidth(long(bandwidth_kHz[config.bandwidthIndex]));
   LoRa.setSpreadingFactor(config.spreadingFactor);
   LoRa.setCodingRate4(config.codingRate);
@@ -116,12 +116,11 @@ void LoraHandler::onReceive(int packetSize) {
 
 bool LoraHandler::get(Message &message) {
   message = lastReceived;
+  bool ret = validMessage;
   validMessage = false;
+
+  return ret;
 }
 
 /* Global definitions (extern) */
 LoraHandler loraHandler;
-std::array<double, 10> bandwidth_kHz = {7.8E3,  10.4E3, 15.6E3, 20.8E3, 31.25E3,
-                                        41.7E3, 62.5E3, 125E3,  250E3,  500E3};
-LoRaConfig defaultConfig = {
-    .bandwidthIndex = 6, .spreadingFactor = 10, .codingRate = 5, .txPower = 2};

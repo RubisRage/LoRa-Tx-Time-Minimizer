@@ -3,11 +3,11 @@
 #include "types/LoraTypes.hpp"
 #include <LoraHandler/LoraHandler.hpp>
 
-void TestState::execute() {
+void testStateFunc() {
 
   Message message;
 
-  if (loraHandler.get(message)) {
+  if (!loraHandler.get(message)) {
     return;
   }
 
@@ -34,8 +34,9 @@ void TestState::execute() {
              "dBm, Remote SNR:", remoteSNR, "dB");
 }
 
-TestState testState(1, "Test state slave");
+constexpr State states[] = {
+    State{.id = 0, .name = "Test state", .execute = testStateFunc}};
 
-StateMachine<1, 0> slaveStateMachine(&testState);
+StateMachine<1, 0> slaveStateMachine(&states[0]);
 
 StateMachine<1, 0> &initializeSlaveStateMachine() { return slaveStateMachine; }

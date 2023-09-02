@@ -5,27 +5,7 @@
 #include <LoraHandler/LoraHandler.hpp>
 #include <globals/globals.hpp>
 
-LoRaConfig localNodeConf = defaultConfig;
-
-template <size_t size>
-void buildPayload(std::array<uint8_t, size> &payload, size_t &payloadLength) {
-#ifdef DEBUG_LOG
-  serial.log(LogLevel::DEBUG, "Start build:", payloadLength);
-#endif // DEBUG
-
-  payload[payloadLength] = (localNodeConf.bandwidthIndex << 4);
-  payload[payloadLength++] |= ((localNodeConf.spreadingFactor - 6) << 1);
-  payload[payloadLength] = ((localNodeConf.codingRate - 5) << 6);
-  payload[payloadLength++] |= ((localNodeConf.txPower - 2) << 1);
-  payload[payloadLength++] = uint8_t(-LoRa.packetRssi() * 2);
-  payload[payloadLength++] = uint8_t(148 + LoRa.packetSnr());
-
-#ifdef DEBUG_LOG
-  serial.log(LogLevel::DEBUG, "End build:", payloadLength.c_str());
-#endif // DEBUG
-}
-
-void TestState::execute() {
+void testStateFunc() {
 
   static uint16_t msgCount = 0;
 
@@ -35,7 +15,12 @@ void TestState::execute() {
 
     std::array<uint8_t, 50> payload;
 
-    buildPayload(payload, payloadLength);
+    payload[payloadLength] = (localNodeConf.bandwidthIndex << 4);
+    payload[payloadLength++] |= ((localNodeConf.spreadingFactor - 6) << 1);
+    payload[payloadLength] = ((localNodeConf.codingRate - 5) << 6);
+    payload[payloadLength++] |= ((localNodeConf.txPower - 2) << 1);
+    payload[payloadLength++] = uint8_t(-LoRa.packetRssi() * 2);
+    payload[payloadLength++] = uint8_t(148 + LoRa.packetSnr());
 
     Message message;
     message.id = msgCount++;
@@ -52,11 +37,11 @@ void TestState::execute() {
   loraHandler.updateTransmissionState();
 }
 
+constexpr State states[] = {
+    {.id = 0, .name = "Test state", .execute = testStateFunc}};
 
-TestState testState(1, "Test state");
-
-StateMachine<1, 0> masterStateMachine(&testState);
+StateMachine<1, 0> masterStateMachine(&states[0]);
 
 StateMachine<1, 0> &initializeMasterStateMachine() {
-    return masterStateMachine;
+  return masterStateMachine;
 }

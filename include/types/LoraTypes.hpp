@@ -11,5 +11,9 @@ struct LoRaConfig {
 };
 
 /* Possible bandwidths */
-extern std::array<double, 10> bandwidth_kHz;
-extern LoRaConfig defaultConfig;
+// extern std::array<double, 10> bandwidth_kHz;
+constexpr std::array<double, 10> bandwidth_kHz = {
+    7.8E3,  10.4E3, 15.6E3, 20.8E3, 31.25E3,
+    41.7E3, 62.5E3, 125E3,  250E3,  500E3};
+constexpr LoRaConfig defaultConfig = {
+    .bandwidthIndex = 6, .spreadingFactor = 10, .codingRate = 5, .txPower = 2};

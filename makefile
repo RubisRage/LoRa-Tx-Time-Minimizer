@@ -3,8 +3,7 @@
 #PATH := /usr/local/bin:$(PATH)
 
 all:
-				platformio run -e master
-				platformio run -e slave
+				platformio run 
 
 compiledb:
 				platformio run --target compiledb

@@ -9,27 +9,21 @@
 #include <utility>
 
 struct State {
-  State(uint8_t id, const char *name) : id(id), name(name){};
-  State(State &&) = delete;
-  State(const State &) = delete;
-  State &operator=(State &&) = delete;
-  State &operator=(const State &) = delete;
-
   uint8_t id;
   const char *name;
-  virtual void execute() = 0;
+  void (*execute)();
 };
 
 template <size_t numberOfStates, size_t numberOfTransitions>
 class StateMachine {
 private:
-  std::array<std::array<State *, numberOfTransitions>, numberOfStates>
+  std::array<std::array<const State *, numberOfTransitions>, numberOfStates>
       transitionTable;
 
-  State *currentState;
+  const State *currentState;
 
 public:
-  StateMachine(State *initial) : currentState(initial) {
+  StateMachine(const State *initial) : currentState(initial) {
     for (auto &stateTransitions : transitionTable)
       stateTransitions.fill(nullptr);
   }
@@ -46,7 +40,7 @@ public:
       Fatal::exit();
     }
 
-    State *nextState = transitionTable[currentState][input];
+    const State *nextState = transitionTable[currentState][input];
 
     if (nextState == nullptr) {
       serial.log(LogLevel::FAILURE, "Transitioned to dump state", input);
@@ -60,7 +54,7 @@ public:
       const State &s,
       const std::initializer_list<std::pair<size_t, State *>> &transitions) {
     if (s.id > numberOfStates) {
-      serial.log(LogLevel::FAILURE, "Transition input out of bounds:", s.name);
+      serial.log(LogLevel::FAILURE, "Registered state out of bounds:", s.name);
       Fatal::exit();
     }
 
@@ -77,5 +71,5 @@ public:
     }
   }
 
-  State &getState() { return *currentState; }
+  const State &getState() { return *currentState; }
 };

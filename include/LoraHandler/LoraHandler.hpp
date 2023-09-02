@@ -20,7 +20,7 @@ public:
    * Initialization function. Must be called at least once before
    * using any other function.
    */
-  void setup(LoRaConfig &config, void (*onReceive)(int) = nullptr);
+  void setup(const LoRaConfig &config, void (*onReceive)(int) = nullptr);
 
   /**
    * Send message using LoRa library.
@@ -33,7 +33,7 @@ public:
   /**
    * Update LoRa configuration parameters.
    */
-  void updateConfig(LoRaConfig &config);
+  void updateConfig(const LoRaConfig &config);
 
   /*
    * Must be called periodically for transmission state to be reflected
