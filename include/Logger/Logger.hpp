@@ -4,8 +4,17 @@
 #include <initializer_list>
 #include <types/LoraTypes.hpp>
 #include <types/Message.hpp>
+#include <types/State.hpp>
 
-enum LogLevel { FAILURE, ERROR, WARNING, INFORMATION, STATISTICS, DEBUG };
+enum LogLevel {
+  FAILURE,
+  ERROR,
+  WARNING,
+  INFORMATION,
+  STATISTICS,
+  TRANSITION,
+  DEBUG
+};
 
 class Logger {
 public:
@@ -30,6 +39,19 @@ public:
    */
   template <typename... Printable> void log(LogLevel level, Printable... msgs) {
     printLabel(level);
+
+    print(msgs...);
+
+    Serial.print('\n');
+  }
+
+  template <typename... Printable>
+  void log(LogLevel level, State state, Printable... msgs) {
+    printLabel(level);
+
+    Serial.print("State(");
+    Serial.print(state.name);
+    Serial.print(") ");
 
     print(msgs...);
 

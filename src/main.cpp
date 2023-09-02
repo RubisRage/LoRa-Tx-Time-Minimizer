@@ -4,14 +4,6 @@
 
 #include "states.hpp"
 
-#ifdef MASTER_BOARD
-auto &stateMachine = initializeMasterStateMachine();
-#endif
-
-#ifdef SLAVE_BOARD
-auto &stateMachine = initializeSlaveStateMachine();
-#endif
-
 void setup() {
   Serial.begin(115200);
   while (!Serial)

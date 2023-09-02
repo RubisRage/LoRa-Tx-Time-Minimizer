@@ -11,3 +11,5 @@
 #if !(defined(MASTER_BOARD) || defined(SLAVE_BOARD))
 #error "MASTER_BOARD or SLAVE_BOARD macros must be defined."
 #endif
+
+extern StateMachine stateMachine;

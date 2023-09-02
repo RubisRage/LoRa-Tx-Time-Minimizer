@@ -2,4 +2,10 @@
 
 #include <StateMachine/StateMachine.hpp>
 
-StateMachine<1, 0> &initializeSlaveStateMachine();
+namespace SlaveStates {
+
+extern State testState;
+extern State listenLoRaPackages;
+extern State sendEchoReply;
+
+} // namespace SlaveStates

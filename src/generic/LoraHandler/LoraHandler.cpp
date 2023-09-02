@@ -8,7 +8,7 @@ LoraHandler::LoraHandler()
       dutyCycleManager(INITIAL_INTERVAL_BETWEEN_TX), transmitting(false),
       txDone(true) {}
 
-bool LoraHandler::sendMessage(Message message) {
+bool LoraHandler::send(Message message) {
   if (!dutyCycleManager.canTransmit())
     return false;
 

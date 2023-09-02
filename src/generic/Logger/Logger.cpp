@@ -9,12 +9,13 @@ struct Level {
   const char *legend;
 };
 
-static std::array<Level, 6> levels = {
+static std::array<Level, 7> levels = {
     Level{"(FF)", "Complete failure"}, /* LogLevel::FAILURE */
     Level{"(EE)", "Error"},            /* LogLevel::ERROR */
     Level{"(WW)", "Warning"},          /* LogLevel::WARNING */
     Level{"(II)", "Information"},      /* LogLevel::INFORMATION */
     Level{"(SS)", "Statistics"},       /* LogLevel::STATISTICS */
+    Level{"(TT)", "State transition"}, /* LogLevel::DEBUG */
     Level{"(DD)", "Debug"}             /* LogLevel::DEBUG */
 };
 

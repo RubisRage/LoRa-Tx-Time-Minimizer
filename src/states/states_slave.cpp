@@ -1,9 +1,15 @@
 #include "states/states_slave.hpp"
 #include "LoRa.h"
+#include "Logger/Logger.hpp"
+#include "states.hpp"
 #include "types/LoraTypes.hpp"
+#include "types/Message.hpp"
 #include <LoraHandler/LoraHandler.hpp>
+#include <globals/globals.hpp>
 
-void testStateFunc() {
+namespace Actions {
+
+void testState(const State &current) {
 
   Message message;
 
@@ -34,9 +40,54 @@ void testStateFunc() {
              "dBm, Remote SNR:", remoteSNR, "dB");
 }
 
-constexpr State states[] = {
-    State{.id = 0, .name = "Test state", .execute = testStateFunc}};
+void listenLoRaPackages(const State &current) {
+  Message message;
 
-StateMachine<1, 0> slaveStateMachine(&states[0]);
+  if (!loraHandler.get(message)) {
+    return;
+  }
 
-StateMachine<1, 0> &initializeSlaveStateMachine() { return slaveStateMachine; }
+  switch (message.type) {
+  case MessageType::ECHO_REQ:
+    stateMachine.transition(&SlaveStates::sendEchoReply);
+    break;
+  case MessageType::CONFIG_REQ:
+    break;
+  case MessageType::FALLBACK_REQ:
+    break;
+  default:
+    serial.log(LogLevel::ERROR, current, "Received non-request message.");
+    break;
+  }
+}
+
+void sendEchoReply(const State &current) {
+  if (!loraHandler.canTransmit()) {
+    return;
+  }
+
+  Message echoReply;
+
+  echoReply.id = 0;
+  echoReply.type = MessageType::ECHO_REPLY;
+  echoReply.sourceAddress = localAddress;
+  echoReply.destinationAddress = remoteAddress;
+  echoReply.payload = nullptr;
+  echoReply.payloadLength = 0;
+
+  loraHandler.send(echoReply);
+  stateMachine.transition(&SlaveStates::listenLoRaPackages);
+}
+
+} // namespace Actions
+
+State SlaveStates::testState = {.name = "Test state",
+                                .action = Actions::testState};
+
+State SlaveStates::listenLoRaPackages = {.name = "Test state",
+                                         .action = Actions::listenLoRaPackages};
+
+State SlaveStates::sendEchoReply = {.name = "Test state",
+                                    .action = Actions::sendEchoReply};
+
+StateMachine stateMachine(&SlaveStates::listenLoRaPackages);

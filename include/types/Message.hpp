@@ -5,6 +5,9 @@
 enum MessageType : uint8_t {
   STATUS,
   CONFIG_REQ,
+  ECHO_REQ,
+  ECHO_REPLY,
+  FALLBACK_REQ,
   ACK,
 };
 

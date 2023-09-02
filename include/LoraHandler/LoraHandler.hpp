@@ -28,7 +28,7 @@ public:
    * @return true if message sent, false if duty cycle restriction would
    * be violated by transmission.
    */
-  bool sendMessage(Message);
+  bool send(Message);
 
   /**
    * Update LoRa configuration parameters.

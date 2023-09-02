@@ -2,4 +2,8 @@
 
 #include <StateMachine/StateMachine.hpp>
 
-StateMachine<1, 0> &initializeMasterStateMachine();
+namespace MasterStates {
+extern State testState;
+extern State sendEchoRequest;
+extern State waitEchoReply;
+} // namespace MasterStates
