@@ -3,6 +3,7 @@
 #include "LoRa.h"
 #include "Logger/Logger.hpp"
 #include "StateMachine/StateMachine.hpp"
+#include "Timeout/Timeout.hpp"
 #include "states.hpp"
 #include "types/Message.hpp"
 #include <LoraHandler/LoraHandler.hpp>
@@ -10,6 +11,7 @@
 #include <globals/globals.hpp>
 
 namespace Actions {
+
 void testAction(const State &current) {
 
   static uint16_t msgCount = 0;
@@ -46,55 +48,40 @@ void sendEchoRequest(const State &current) {
     return;
   }
 
-  Message echoRequest;
-
-  echoRequest.id = 0;
-  echoRequest.type = MessageType::ECHO_REQ;
-  echoRequest.sourceAddress = localAddress;
-  echoRequest.destinationAddress = remoteAddress;
-  echoRequest.payload = 0;
-  echoRequest.payloadLength = 0;
+  Message echoRequest(msgCount, MessageType::ECHO_REQ);
 
   loraHandler.send(echoRequest);
+
+  serial.log(LogLevel::INFORMATION, "Sending message:", echoRequest);
 
   stateMachine.transition(&MasterStates::waitEchoReply);
 }
 
 void waitEchoReply(const State &current) {
-  using namespace std::chrono_literals;
-  static ArduinoClock::time_point waitStart;
-  static const ArduinoClock::duration TIMEOUT = 100000ms;
-  static bool waitStarted = false;
+  static Timeout timeout(TIMEOUT);
 
   Message echoReply;
 
   if (!loraHandler.get(echoReply)) {
-    ArduinoClock::duration waited = 0ms;
-
-    if (!waitStarted) {
-      waitStarted = true;
-      waitStart = ArduinoClock::now();
-    } else {
-      waited = ArduinoClock::now() - waitStart;
-    }
-
-    if (waited > TIMEOUT) {
+    if (timeout.hasTimedOut()) {
       serial.log(LogLevel::ERROR, current, "Timed out");
-
-      waitStarted = false;
-      stateMachine.transition(nullptr); // TODO: Specify corresponding
-                                        // transition
+      stateMachine.transition(&MasterStates::initialState);
     }
 
     return;
   }
 
-  waitStarted = false;
+  timeout.reset();
 
   if (echoReply.type != MessageType::ECHO_REPLY) {
     serial.log(LogLevel::ERROR, current, "Unexpected message type received");
-    return;
   }
+
+  stateMachine.transition(&MasterStates::initialState);
+}
+
+void initialState(const State &current) {
+  stateMachine.transition(&MasterStates::sendEchoRequest);
 }
 
 } // namespace Actions
@@ -108,4 +95,7 @@ State MasterStates::sendEchoRequest = {.name = "Send echo request",
 State MasterStates::waitEchoReply = {.name = "Wait echo reply",
                                      .action = Actions::waitEchoReply};
 
-StateMachine stateMachine(&MasterStates::testState);
+State MasterStates::initialState = {.name = "Initial state",
+                                    .action = Actions::initialState};
+
+StateMachine stateMachine(&MasterStates::initialState);

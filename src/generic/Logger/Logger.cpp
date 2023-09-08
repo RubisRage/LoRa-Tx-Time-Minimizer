@@ -41,12 +41,21 @@ void Logger::log(LogLevel level, const char *logMessage, const char *end) {
 void Logger::log(LogLevel level, const char *logMessage, Message message) {
   log(level, logMessage);
 
+  const char *types[] = {
+      "STATUS", "CONFIG_REQ", "ECHO_REQ", "ECHO_REPLY", "FALLBACK_REQ", "ACK",
+  };
+
   Serial.println("{");
-  Serial.println("\t\tSender address: 0x" + String(message.sourceAddress, HEX));
-  Serial.println("\t\tRecipient address: 0x" +
-                 String(message.destinationAddress, HEX));
-  Serial.println("\t\tMessage ID: " + String(message.id));
-  Serial.println("\t\tPayload length: " + String(message.payloadLength));
+  Serial.print("\t\tSender address: 0x");
+  Serial.println(message.sourceAddress, HEX);
+  Serial.print("\t\tRecipient address: 0x");
+  Serial.println(message.destinationAddress, HEX);
+  Serial.print("\t\tMessage ID: 0x");
+  Serial.println(message.id, HEX);
+  Serial.print("\t\tMessage type: ");
+  Serial.println(types[message.type]);
+  Serial.print("\t\tPayload length: ");
+  Serial.println(message.payloadLength);
   Serial.print("\t\tPayload: ");
 
   for (int i = 0; i < message.payloadLength; i++) {

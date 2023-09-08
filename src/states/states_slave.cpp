@@ -84,10 +84,10 @@ void sendEchoReply(const State &current) {
 State SlaveStates::testState = {.name = "Test state",
                                 .action = Actions::testState};
 
-State SlaveStates::listenLoRaPackages = {.name = "Test state",
+State SlaveStates::listenLoRaPackages = {.name = "Listen LoRa packages",
                                          .action = Actions::listenLoRaPackages};
 
-State SlaveStates::sendEchoReply = {.name = "Test state",
+State SlaveStates::sendEchoReply = {.name = "Send Echo Reply",
                                     .action = Actions::sendEchoReply};
 
-StateMachine stateMachine(&SlaveStates::testState);
+StateMachine stateMachine(&SlaveStates::listenLoRaPackages);

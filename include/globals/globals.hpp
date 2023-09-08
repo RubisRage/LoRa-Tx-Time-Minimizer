@@ -1,3 +1,6 @@
+#pragma once
+
+#include "DutyCycleManager/ArduinoClock.hpp"
 #include "types/LoraTypes.hpp"
 #include <cstdint>
 
@@ -11,5 +14,9 @@ constexpr uint8_t localAddress = 0xb1;
 constexpr uint8_t remoteAddress = 0xb0;
 #endif
 
-// constexpr LoRaConfig defaultConfig;
+constexpr auto TIMEOUT = ArduinoClock::duration(100000);
+
 extern LoRaConfig localNodeConf;
+extern LoRaConfig lastNodeConf;
+extern LoRaConfig nextNodeConf;
+extern uint16_t msgCount;

@@ -58,12 +58,13 @@ public:
 
 private:
   Message lastReceived;
-  bool validMessage;
+  std::array<uint8_t, 20> payload;
+  volatile bool validMessage;
   DutyCycleManager dutyCycleManager;
   volatile bool transmitting;
   volatile bool txDone;
 
-  void onReceive(int packetSize);
+  static void onReceive(int packetSize);
 };
 
 extern LoraHandler loraHandler;

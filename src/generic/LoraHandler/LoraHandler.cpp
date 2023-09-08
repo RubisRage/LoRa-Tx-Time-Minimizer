@@ -27,44 +27,14 @@ bool LoraHandler::send(Message message) {
   LoRa.write(message.type);
   LoRa.write(message.payloadLength);
   LoRa.write(message.payload, (size_t)message.payloadLength);
-  LoRa.endPacket(true);
+  LoRa.endPacket();
+
+  dutyCycleManager.updateIntervalBetweenTx();
+
+  /* Enable receiving, which is disabled when transmitting */
+  LoRa.receive();
 
   return true;
-}
-
-void LoraHandler::setup(const LoRaConfig &config, void (*onReceive)(int)) {
-  LoRa.setSyncWord(0x12);
-  LoRa.setPreambleLength(8);
-  LoRa.onReceive([](int packetSize) { loraHandler.onReceive(packetSize); });
-  LoRa.onTxDone([] { loraHandler.txDone = true; });
-
-  updateConfig(config);
-}
-
-void LoraHandler::updateConfig(const LoRaConfig &config) {
-  LoRa.setSignalBandwidth(long(bandwidth_kHz[config.bandwidthIndex]));
-  LoRa.setSpreadingFactor(config.spreadingFactor);
-  LoRa.setCodingRate4(config.codingRate);
-  LoRa.setTxPower(config.txPower, PA_OUTPUT_PA_BOOST_PIN);
-
-  LoRa.receive();
-}
-
-void LoraHandler::updateTransmissionState() {
-
-  if (transmitting && txDone) {
-
-    transmitting = false;
-
-    dutyCycleManager.updateIntervalBetweenTx();
-
-    /* Enable receiving, which is disabled when transmitting */
-    LoRa.receive();
-  }
-}
-
-bool LoraHandler::canTransmit() {
-  return !transmitting && dutyCycleManager.canTransmit();
 }
 
 void LoraHandler::onReceive(int packetSize) {
@@ -81,13 +51,13 @@ void LoraHandler::onReceive(int packetSize) {
   message.type = MessageType(LoRa.read());
   message.payloadLength = LoRa.read();
 
-  std::array<uint8_t, 10> payload;
-  message.payload = payload.data();
+  message.payload = loraHandler.payload.data();
 
   uint8_t receivedBytes = 0;
-  while (LoRa.available() && (receivedBytes < uint8_t(payload.size() - 1)) &&
+  while (LoRa.available() &&
+         (receivedBytes < uint8_t(loraHandler.payload.size() - 1)) &&
          receivedBytes < message.payloadLength) {
-    payload[receivedBytes++] = (char)LoRa.read();
+    loraHandler.payload[receivedBytes++] = (uint8_t)LoRa.read();
   }
 
   while (LoRa.available())
@@ -100,8 +70,12 @@ void LoraHandler::onReceive(int packetSize) {
   }
 
   if ((message.destinationAddress & localAddress) != localAddress) {
-    serial.log(LogLevel::WARNING,
-               "Received message was not meant for localhost, dropping.");
+    serial.log(
+        LogLevel::WARNING,
+        "Received message was not meant for local node, destination address:",
+        message.destinationAddress, ", dropping.");
+
+    serial.log(LogLevel::DEBUG, "Local address: ", localAddress);
     return;
   }
 
@@ -110,9 +84,31 @@ void LoraHandler::onReceive(int packetSize) {
   serial.log(LogLevel::INFORMATION, "Local RSSI:", LoRa.packetRssi(),
              "dBm, Local SNR:", LoRa.packetSnr(), "dB");
 
-  lastReceived = message;
-  validMessage = true;
+  loraHandler.lastReceived = message;
+  loraHandler.validMessage = true;
 }
+
+void LoraHandler::setup(const LoRaConfig &config, void (*onReceive)(int)) {
+  LoRa.setSyncWord(0x12);
+  LoRa.setPreambleLength(8);
+  LoRa.onReceive(LoraHandler::onReceive);
+  LoRa.onTxDone([] { loraHandler.txDone = true; });
+
+  updateConfig(config);
+}
+
+void LoraHandler::updateConfig(const LoRaConfig &config) {
+  LoRa.setSignalBandwidth(long(bandwidth_kHz[config.bandwidthIndex]));
+  LoRa.setSpreadingFactor(config.spreadingFactor);
+  LoRa.setCodingRate4(config.codingRate);
+  LoRa.setTxPower(config.txPower, PA_OUTPUT_PA_BOOST_PIN);
+
+  LoRa.receive();
+}
+
+void LoraHandler::updateTransmissionState() {}
+
+bool LoraHandler::canTransmit() { return dutyCycleManager.canTransmit(); }
 
 bool LoraHandler::get(Message &message) {
   message = lastReceived;
