@@ -42,6 +42,10 @@ void testAction(const State &current) {
 
 void sendEchoRequest(const State &current) {
 
+  if (!loraHandler.canTransmit()) {
+    return;
+  }
+
   Message echoRequest;
 
   echoRequest.id = 0;

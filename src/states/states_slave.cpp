@@ -35,8 +35,8 @@ void testState(const State &current) {
   remoteRSSI = -int(payload[2]) / 2.0f;
   remoteSNR = int(payload[3]) - 148;
 
-  serial.log(LogLevel::INFORMATION, "Remote node config:", remoteNodeConf);
-  serial.log(LogLevel::INFORMATION, "Remote RSSI:", remoteRSSI,
+  serial.log(LogLevel::STATISTICS, "Remote node config:", remoteNodeConf);
+  serial.log(LogLevel::STATISTICS, "Remote RSSI:", remoteRSSI,
              "dBm, Remote SNR:", remoteSNR, "dB");
 }
 
@@ -90,4 +90,4 @@ State SlaveStates::listenLoRaPackages = {.name = "Test state",
 State SlaveStates::sendEchoReply = {.name = "Test state",
                                     .action = Actions::sendEchoReply};
 
-StateMachine stateMachine(&SlaveStates::listenLoRaPackages);
+StateMachine stateMachine(&SlaveStates::testState);
