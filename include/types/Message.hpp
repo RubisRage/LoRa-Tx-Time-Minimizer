@@ -22,14 +22,6 @@ struct Message {
 
   Message() = default;
   Message(uint16_t count, MessageType type)
-      :
-#ifdef MASTER_BOARD
-        id(0x8 & count),
-#endif
-#ifdef SLAVE_BOARD
-        id(count),
-#endif
-        type(type), sourceAddress(localAddress),
-        destinationAddress(remoteAddress), payload(nullptr), payloadLength(0) {
-  }
+      : id(idMask | count), type(type), sourceAddress(localAddress),
+        destinationAddress(remoteAddress), payload(nullptr), payloadLength(0) {}
 };

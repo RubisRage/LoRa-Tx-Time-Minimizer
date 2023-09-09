@@ -5,15 +5,12 @@
 
 LoraHandler::LoraHandler()
     : lastReceived(), validMessage(false),
-      dutyCycleManager(INITIAL_INTERVAL_BETWEEN_TX), transmitting(false),
-      txDone(true) {}
+      dutyCycleManager(INITIAL_INTERVAL_BETWEEN_TX) {}
 
 bool LoraHandler::send(Message message) {
   if (!dutyCycleManager.canTransmit())
     return false;
 
-  transmitting = true;
-  txDone = false;
   dutyCycleManager.beginTx();
 
   while (!LoRa.beginPacket()) {
@@ -79,10 +76,12 @@ void LoraHandler::onReceive(int packetSize) {
     return;
   }
 
+  /*
   serial.log(LogLevel::INFORMATION, "Received message", message);
 
   serial.log(LogLevel::INFORMATION, "Local RSSI:", LoRa.packetRssi(),
              "dBm, Local SNR:", LoRa.packetSnr(), "dB");
+  */
 
   loraHandler.lastReceived = message;
   loraHandler.validMessage = true;
@@ -92,7 +91,6 @@ void LoraHandler::setup(const LoRaConfig &config, void (*onReceive)(int)) {
   LoRa.setSyncWord(0x12);
   LoRa.setPreambleLength(8);
   LoRa.onReceive(LoraHandler::onReceive);
-  LoRa.onTxDone([] { loraHandler.txDone = true; });
 
   updateConfig(config);
 }
@@ -111,6 +109,9 @@ void LoraHandler::updateTransmissionState() {}
 bool LoraHandler::canTransmit() { return dutyCycleManager.canTransmit(); }
 
 bool LoraHandler::get(Message &message) {
+  if (!validMessage)
+    return false;
+
   message = lastReceived;
   bool ret = validMessage;
   validMessage = false;

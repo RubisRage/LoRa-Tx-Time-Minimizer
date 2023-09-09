@@ -1,3 +1,4 @@
+#include "globals/globals.hpp"
 #include <DutyCycleManager/DutyCycleManager.hpp>
 #include <Logger/Logger.hpp>
 
@@ -16,9 +17,22 @@ void DutyCycleManager::updateIntervalBetweenTx() {
 
   serial.log(LogLevel::STATISTICS, "Duty cycle is", dutyCycle, "%");
 
+  auto previousTxDelay = txDelay;
+
   if (dutyCycle > 1.0f) {
-    serial.log(LogLevel::WARNING, "Duty cycle exceeded 1%, adjusting.");
     txDelay = txDuration * 100;
+    serial.log(LogLevel::WARNING, "Duty cycle exceeded 1%, adjusting. Was",
+               previousTxDelay.count(), "ms, now is ", txDelay.count(), "ms");
+  }
+
+  if (txDuration < 0.008f * (txDelay + txDuration)) {
+    txDelay = txDuration * 100;
+    serial.log(LogLevel::INFORMATION, "Duty cycle under 0.8%, adjusting. Was",
+               previousTxDelay.count(), "ms, now is ", txDelay.count(), "ms");
+  }
+
+  if (previousTxDelay != txDelay) {
+    TIMEOUT = txDelay * TIMEOUT_SCALE;
   }
 }
 

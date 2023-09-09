@@ -5,8 +5,6 @@
 #include <types/LoraTypes.hpp>
 #include <types/Message.hpp>
 
-#define INITIAL_INTERVAL_BETWEEN_TX std::chrono::milliseconds(10000)
-
 class LoraHandler {
 public:
   LoraHandler();
@@ -57,12 +55,10 @@ public:
   bool get(Message &);
 
 private:
-  Message lastReceived;
   std::array<uint8_t, 20> payload;
+  volatile Message lastReceived;
   volatile bool validMessage;
   DutyCycleManager dutyCycleManager;
-  volatile bool transmitting;
-  volatile bool txDone;
 
   static void onReceive(int packetSize);
 };

@@ -47,6 +47,8 @@ void listenLoRaPackages(const State &current) {
     return;
   }
 
+  serial.log(LogLevel::INFORMATION, "Received message:", message);
+
   switch (message.type) {
   case MessageType::ECHO_REQ:
     stateMachine.transition(&SlaveStates::sendEchoReply);
@@ -76,6 +78,9 @@ void sendEchoReply(const State &current) {
   echoReply.payloadLength = 0;
 
   loraHandler.send(echoReply);
+
+  serial.log(LogLevel::INFORMATION, "Sending echoReply: ", echoReply);
+
   stateMachine.transition(&SlaveStates::listenLoRaPackages);
 }
 

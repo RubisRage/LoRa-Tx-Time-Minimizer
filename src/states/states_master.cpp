@@ -48,11 +48,11 @@ void sendEchoRequest(const State &current) {
     return;
   }
 
-  Message echoRequest(msgCount, MessageType::ECHO_REQ);
+  Message echoRequest(msgCount++, MessageType::ECHO_REQ);
 
   loraHandler.send(echoRequest);
 
-  serial.log(LogLevel::INFORMATION, "Sending message:", echoRequest);
+  serial.log(LogLevel::INFORMATION, "Sending echoRequest:", echoRequest);
 
   stateMachine.transition(&MasterStates::waitEchoReply);
 }
@@ -76,6 +76,8 @@ void waitEchoReply(const State &current) {
   if (echoReply.type != MessageType::ECHO_REPLY) {
     serial.log(LogLevel::ERROR, current, "Unexpected message type received");
   }
+
+  serial.log(LogLevel::INFORMATION, "Received echoReply: ", echoReply);
 
   stateMachine.transition(&MasterStates::initialState);
 }
