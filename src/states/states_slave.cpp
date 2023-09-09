@@ -11,11 +11,10 @@ namespace Actions {
 
 void testState(const State &current) {
 
-  Message message;
-
-  if (!loraHandler.get(message)) {
+  if (loraHandler.hasBeenRead())
     return;
-  }
+
+  Message message = loraHandler.getMessage();
 
   if (message.payloadLength != 4) {
     serial.log(LogLevel::ERROR,
@@ -41,11 +40,10 @@ void testState(const State &current) {
 }
 
 void listenLoRaPackages(const State &current) {
-  Message message;
-
-  if (!loraHandler.get(message)) {
+  if (loraHandler.hasBeenRead())
     return;
-  }
+
+  Message message = loraHandler.getMessage();
 
   serial.log(LogLevel::INFORMATION, "Received message:", message);
 
@@ -68,14 +66,7 @@ void sendEchoReply(const State &current) {
     return;
   }
 
-  Message echoReply;
-
-  echoReply.id = 0;
-  echoReply.type = MessageType::ECHO_REPLY;
-  echoReply.sourceAddress = localAddress;
-  echoReply.destinationAddress = remoteAddress;
-  echoReply.payload = nullptr;
-  echoReply.payloadLength = 0;
+  Message echoReply(msgCount++, MessageType::ECHO_REPLY);
 
   loraHandler.send(echoReply);
 

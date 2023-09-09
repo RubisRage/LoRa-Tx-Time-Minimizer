@@ -60,9 +60,7 @@ void sendEchoRequest(const State &current) {
 void waitEchoReply(const State &current) {
   static Timeout timeout(TIMEOUT);
 
-  Message echoReply;
-
-  if (!loraHandler.get(echoReply)) {
+  if (loraHandler.hasBeenRead()) {
     if (timeout.hasTimedOut()) {
       serial.log(LogLevel::ERROR, current, "Timed out");
       stateMachine.transition(&MasterStates::initialState);
@@ -70,6 +68,8 @@ void waitEchoReply(const State &current) {
 
     return;
   }
+
+  Message echoReply = loraHandler.getMessage();
 
   timeout.reset();
 

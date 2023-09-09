@@ -1,13 +1,15 @@
 #include <LoRa.h>
 #include <Logger/Logger.hpp>
 #include <LoraHandler/LoraHandler.hpp>
+#include <cstring>
 #include <globals/globals.hpp>
+#include <stdlib.h>
 
 LoraHandler::LoraHandler()
-    : lastReceived(), validMessage(false),
+    : lastReceived(), _hasBeenRead(true),
       dutyCycleManager(INITIAL_INTERVAL_BETWEEN_TX) {}
 
-bool LoraHandler::send(Message message) {
+bool LoraHandler::send(Message &message) {
   if (!dutyCycleManager.canTransmit())
     return false;
 
@@ -76,15 +78,8 @@ void LoraHandler::onReceive(int packetSize) {
     return;
   }
 
-  /*
-  serial.log(LogLevel::INFORMATION, "Received message", message);
-
-  serial.log(LogLevel::INFORMATION, "Local RSSI:", LoRa.packetRssi(),
-             "dBm, Local SNR:", LoRa.packetSnr(), "dB");
-  */
-
   loraHandler.lastReceived = message;
-  loraHandler.validMessage = true;
+  loraHandler._hasBeenRead = false;
 }
 
 void LoraHandler::setup(const LoRaConfig &config, void (*onReceive)(int)) {
@@ -104,20 +99,14 @@ void LoraHandler::updateConfig(const LoRaConfig &config) {
   LoRa.receive();
 }
 
-void LoraHandler::updateTransmissionState() {}
-
 bool LoraHandler::canTransmit() { return dutyCycleManager.canTransmit(); }
 
-bool LoraHandler::get(Message &message) {
-  if (!validMessage)
-    return false;
-
-  message = lastReceived;
-  bool ret = validMessage;
-  validMessage = false;
-
-  return ret;
+Message LoraHandler::getMessage() {
+  _hasBeenRead = true;
+  return lastReceived;
 }
+
+bool LoraHandler::hasBeenRead() { return _hasBeenRead; }
 
 /* Global definitions (extern) */
 LoraHandler loraHandler;

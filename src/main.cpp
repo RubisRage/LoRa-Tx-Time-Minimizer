@@ -3,6 +3,7 @@
 #include <LoraHandler/LoraHandler.hpp>
 
 #include "states.hpp"
+#include "variant.h"
 
 void setup() {
   Serial.begin(115200);
@@ -31,7 +32,4 @@ void setup() {
 #endif
 }
 
-void loop() {
-  stateMachine.getState().execute();
-  loraHandler.updateTransmissionState();
-}
+void loop() { stateMachine.getState().execute(); }

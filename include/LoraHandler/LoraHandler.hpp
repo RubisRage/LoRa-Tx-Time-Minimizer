@@ -26,18 +26,12 @@ public:
    * @return true if message sent, false if duty cycle restriction would
    * be violated by transmission.
    */
-  bool send(Message);
+  bool send(Message &);
 
   /**
    * Update LoRa configuration parameters.
    */
   void updateConfig(const LoRaConfig &config);
-
-  /*
-   * Must be called periodically for transmission state to be reflected
-   * correctly.
-   */
-  void updateTransmissionState();
 
   /**
    * @return true if transmission is possible, false otherwise. A transmission
@@ -49,15 +43,14 @@ public:
 
   /**
    * Get last received message.
-   *
-   * @return true if returned message is valid, false otherwise.
    */
-  bool get(Message &);
+  Message getMessage();
+  bool hasBeenRead();
 
 private:
   std::array<uint8_t, 20> payload;
   volatile Message lastReceived;
-  volatile bool validMessage;
+  volatile bool _hasBeenRead;
   DutyCycleManager dutyCycleManager;
 
   static void onReceive(int packetSize);
