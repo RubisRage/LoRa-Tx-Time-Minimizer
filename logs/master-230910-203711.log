@@ -1,0 +1,309 @@
+Log legend
+
+		(FF): Complete failure
+		(EE): Error
+		(WW): Warning
+		(II): Information
+		(SS): Statistics
+		(TT): State transition
+		(DD): Debug
+(II) -> Press s to start execution.
+(II) -> MASTER SETUP CORRECTLY
+Introduce command > (TT) -> Transitioning from " Initial state " to " Send echo request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8000
+		Message type: ECHO_REQ
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 417 ms 
+(SS) -> Duty cycle is 2.74 % 
+(WW) -> Duty cycle exceeded 1%, adjusting. Was 10000 ms, now is  41700 ms 
+(II) -> New timeout set to:  104250 ms 
+(TT) -> Transitioning from " Send echo request " to " Wait echo reply " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x0
+		Message type: ECHO_REPLY
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait echo reply " to " Initial state " 
+Introduce command > (TT) -> Transitioning from " Initial state " to " Send config start " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8001
+		Message type: CONFIG_START
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 417 ms 
+(SS) -> Duty cycle is 1.00 % 
+(II) -> New timeout set to:  104250 ms 
+(TT) -> Transitioning from " Send config start " to " Compute next config " 
+(II) -> Values used for configuration update: { RSSI: -63 , SNR:  11.75 } 
+(II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time. 
+(TT) -> Transitioning from " Compute next config " to " Send Config Request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8002
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 66 0 
+}
+(SS) -> Tx completed in 499 ms 
+(SS) -> Duty cycle is 1.20 % 
+(WW) -> Duty cycle exceeded 1%, adjusting. Was 41700 ms, now is  49900 ms 
+(II) -> New timeout set to:  124750 ms 
+(II) -> Updating LoRa configuration to: { BW: 62500.00 kHz, SPF: 9, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Send Config Request " to " Wait Config Ack " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x1
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait Config Ack " to " Compute next config " 
+(II) -> Values used for configuration update: { RSSI: -30 , SNR:  12.50 } 
+(II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time. 
+(TT) -> Transitioning from " Compute next config " to " Send Config Request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8003
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 64 0 
+}
+(SS) -> Tx completed in 251 ms 
+(SS) -> Duty cycle is 0.50 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 49900 ms, now is  25100 ms 
+(II) -> New timeout set to:  124750 ms 
+(II) -> Updating LoRa configuration to: { BW: 62500.00 kHz, SPF: 8, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Send Config Request " to " Wait Config Ack " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x2
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait Config Ack " to " Compute next config " 
+(II) -> Values used for configuration update: { RSSI: -54 , SNR:  11.00 } 
+(II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time. 
+(TT) -> Transitioning from " Compute next config " to " Send Config Request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8004
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 62 0 
+}
+(SS) -> Tx completed in 128 ms 
+(SS) -> Duty cycle is 0.51 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 25100 ms, now is  12800 ms 
+(II) -> New timeout set to:  62750 ms 
+(II) -> Updating LoRa configuration to: { BW: 62500.00 kHz, SPF: 7, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Send Config Request " to " Wait Config Ack " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x3
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait Config Ack " to " Compute next config " 
+(II) -> Values used for configuration update: { RSSI: -28 , SNR:  9.00 } 
+(II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time. 
+(TT) -> Transitioning from " Compute next config " to " Send Config Request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8005
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 72 0 
+}
+(SS) -> Tx completed in 76 ms 
+(SS) -> Duty cycle is 0.59 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 12800 ms, now is  7600 ms 
+(II) -> New timeout set to:  32000 ms 
+(II) -> Updating LoRa configuration to: { BW: 125000.00 kHz, SPF: 7, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Send Config Request " to " Wait Config Ack " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x4
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait Config Ack " to " Compute next config " 
+(II) -> Values used for configuration update: { RSSI: -29 , SNR:  9.00 } 
+(II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time. 
+(TT) -> Transitioning from " Compute next config " to " Send Config Request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8006
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 82 0 
+}
+(SS) -> Tx completed in 39 ms 
+(SS) -> Duty cycle is 0.51 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 7600 ms, now is  3900 ms 
+(II) -> New timeout set to:  19000 ms 
+(II) -> Updating LoRa configuration to: { BW: 250000.00 kHz, SPF: 7, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Send Config Request " to " Wait Config Ack " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x5
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait Config Ack " to " Compute next config " 
+(II) -> Values used for configuration update: { RSSI: -27 , SNR:  9.50 } 
+(II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time. 
+(TT) -> Transitioning from " Compute next config " to " Send Config Request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8007
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 92 0 
+}
+(SS) -> Tx completed in 22 ms 
+(SS) -> Duty cycle is 0.56 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 3900 ms, now is  2200 ms 
+(II) -> New timeout set to:  9750 ms 
+(II) -> Updating LoRa configuration to: { BW: 500000.00 kHz, SPF: 7, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Send Config Request " to " Wait Config Ack " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x6
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait Config Ack " to " Compute next config " 
+(II) -> Values used for configuration update: { RSSI: -24 , SNR:  5.00 } 
+(II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time. 
+(II) -> State(Compute next config) Optimal configuration has been reached! Transmission time minimization has ended. 
+(TT) -> Transitioning from " Compute next config " to " Send config end " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8008
+		Message type: CONFIG_END
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 11 ms 
+(SS) -> Duty cycle is 0.50 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 2200 ms, now is  1100 ms 
+(II) -> New timeout set to:  5500 ms 
+(TT) -> Transitioning from " Send config end " to " Initial state " 
+Introduce command > (TT) -> Transitioning from " Initial state " to " Send echo request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8009
+		Message type: ECHO_REQ
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 12 ms 
+(SS) -> Duty cycle is 0.07 % 
+(II) -> New timeout set to:  2750 ms 
+(TT) -> Transitioning from " Send echo request " to " Wait echo reply " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x7
+		Message type: ECHO_REPLY
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait echo reply " to " Initial state " 
+Introduce command > (TT) -> Transitioning from " Initial state " to " Send echo request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x800A
+		Message type: ECHO_REQ
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 11 ms 
+(SS) -> Duty cycle is 0.04 % 
+(II) -> New timeout set to:  2750 ms 
+(TT) -> Transitioning from " Send echo request " to " Wait echo reply " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x8
+		Message type: ECHO_REPLY
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait echo reply " to " Initial state " 
+Introduce command > (TT) -> Transitioning from " Initial state " to " Send echo request " 
+(II) -> Sending message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x800B
+		Message type: ECHO_REQ
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 11 ms 
+(SS) -> Duty cycle is 0.04 % 
+(II) -> New timeout set to:  2750 ms 
+(TT) -> Transitioning from " Send echo request " to " Wait echo reply " 
+(II) -> Received message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x9
+		Message type: ECHO_REPLY
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait echo reply " to " Initial state " 
+Introduce command > 

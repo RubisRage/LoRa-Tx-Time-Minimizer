@@ -1,0 +1,280 @@
+Log legend
+
+		(FF): Complete failure
+		(EE): Error
+		(WW): Warning
+		(II): Information
+		(SS): Statistics
+		(TT): State transition
+		(DD): Debug
+(II) -> Press s to start execution.
+(II) -> SLAVE SETUP CORRECTLY
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8000
+		Message type: ECHO_REQ
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Listen LoRa packages " to " Send Echo Reply " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x0
+		Message type: ECHO_REPLY
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 417 ms 
+(SS) -> Duty cycle is 4.06 % 
+(WW) -> Duty cycle exceeded 1%, adjusting. Was 10000 ms, now is  41700 ms 
+(II) -> New timeout set to:  83400 ms 
+(TT) -> Transitioning from " Send Echo Reply " to " Listen LoRa packages " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8001
+		Message type: CONFIG_START
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Listen LoRa packages " to " Wait on configSet (or configEnd) " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8002
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 66 0 
+}
+(TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Update config " 
+(II) -> Updating LoRa configuration to: { BW: 62500.00 kHz, SPF: 9, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Update config " to " Send Config ACK " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x1
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 251 ms 
+(SS) -> Duty cycle is 0.30 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 41700 ms, now is  25100 ms 
+(II) -> New timeout set to:  83400 ms 
+(TT) -> Transitioning from " Send Config ACK " to " Wait on configSet (or configEnd) " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8003
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 64 0 
+}
+(TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Update config " 
+(II) -> Updating LoRa configuration to: { BW: 62500.00 kHz, SPF: 8, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Update config " to " Send Config ACK " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x2
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 128 ms 
+(SS) -> Duty cycle is 0.26 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 25100 ms, now is  12800 ms 
+(II) -> New timeout set to:  50200 ms 
+(TT) -> Transitioning from " Send Config ACK " to " Wait on configSet (or configEnd) " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8004
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 62 0 
+}
+(TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Update config " 
+(II) -> Updating LoRa configuration to: { BW: 62500.00 kHz, SPF: 7, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Update config " to " Send Config ACK " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x3
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 66 ms 
+(SS) -> Duty cycle is 0.26 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 12800 ms, now is  6600 ms 
+(II) -> New timeout set to:  25600 ms 
+(TT) -> Transitioning from " Send Config ACK " to " Wait on configSet (or configEnd) " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8005
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 72 0 
+}
+(TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Update config " 
+(II) -> Updating LoRa configuration to: { BW: 125000.00 kHz, SPF: 7, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Update config " to " Send Config ACK " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x4
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 34 ms 
+(SS) -> Duty cycle is 0.27 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 6600 ms, now is  3400 ms 
+(II) -> New timeout set to:  13200 ms 
+(TT) -> Transitioning from " Send Config ACK " to " Wait on configSet (or configEnd) " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8006
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 82 0 
+}
+(TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Update config " 
+(II) -> Updating LoRa configuration to: { BW: 250000.00 kHz, SPF: 7, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Update config " to " Send Config ACK " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x5
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 19 ms 
+(SS) -> Duty cycle is 0.25 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 3400 ms, now is  1900 ms 
+(II) -> New timeout set to:  6800 ms 
+(TT) -> Transitioning from " Send Config ACK " to " Wait on configSet (or configEnd) " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8007
+		Message type: CONFIG_SET
+		Payload length: 2
+		Payload: 92 0 
+}
+(TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Update config " 
+(II) -> Updating LoRa configuration to: { BW: 500000.00 kHz, SPF: 7, CR: 5, TxPwr: 2}
+(TT) -> Transitioning from " Update config " to " Send Config ACK " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x6
+		Message type: CONFIG_ACK
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 12 ms 
+(SS) -> Duty cycle is 0.31 % 
+(II) -> Duty cycle under 0.8%, adjusting. Was 1900 ms, now is  1200 ms 
+(II) -> New timeout set to:  3800 ms 
+(TT) -> Transitioning from " Send Config ACK " to " Wait on configSet (or configEnd) " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8008
+		Message type: CONFIG_END
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Listen LoRa packages " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x8009
+		Message type: ECHO_REQ
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Listen LoRa packages " to " Send Echo Reply " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x7
+		Message type: ECHO_REPLY
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 11 ms 
+(SS) -> Duty cycle is 0.06 % 
+(II) -> New timeout set to:  2400 ms 
+(TT) -> Transitioning from " Send Echo Reply " to " Listen LoRa packages " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x800A
+		Message type: ECHO_REQ
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Listen LoRa packages " to " Send Echo Reply " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x8
+		Message type: ECHO_REPLY
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 11 ms 
+(SS) -> Duty cycle is 0.04 % 
+(II) -> New timeout set to:  2400 ms 
+(TT) -> Transitioning from " Send Echo Reply " to " Listen LoRa packages " 
+(II) -> Received message:
+{
+		Sender address: 0xB0
+		Recipient address: 0xB1
+		Message ID: 0x800B
+		Message type: ECHO_REQ
+		Payload length: 0
+		Payload: 
+}
+(TT) -> Transitioning from " Listen LoRa packages " to " Send Echo Reply " 
+(II) -> Sending message:
+{
+		Sender address: 0xB1
+		Recipient address: 0xB0
+		Message ID: 0x9
+		Message type: ECHO_REPLY
+		Payload length: 0
+		Payload: 
+}
+(SS) -> Tx completed in 11 ms 
+(SS) -> Duty cycle is 0.04 % 
+(II) -> New timeout set to:  2400 ms 
+(TT) -> Transitioning from " Send Echo Reply " to " Listen LoRa packages " 

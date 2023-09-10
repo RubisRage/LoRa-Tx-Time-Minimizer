@@ -6,4 +6,3 @@ compile_commands.json
 .vscode
 .clangd
 .compiledb.py
-logs
