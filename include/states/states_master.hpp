@@ -9,8 +9,10 @@ extern State waitEchoReply;
 extern State initialState;
 extern State computeNextConfig;
 extern State sendConfigRequest;
-extern State waitConfigSet;
+extern State sendConfigStart;
+extern State sendConfigEnd;
+extern State waitConfigAck;
 extern State fallbackToPrevious;
-extern State waitFallbackConfigSet;
+extern State waitFallbackConfigAck;
 extern State fallbackOnTimeout;
 } // namespace MasterStates

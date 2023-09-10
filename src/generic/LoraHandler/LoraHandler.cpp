@@ -1,3 +1,4 @@
+#include "types/Message.hpp"
 #include <LoRa.h>
 #include <Logger/Logger.hpp>
 #include <LoraHandler/LoraHandler.hpp>
@@ -26,66 +27,77 @@ bool LoraHandler::send(Message &message) {
   LoRa.write(message.type);
   LoRa.write(message.payloadLength);
   LoRa.write(message.payload, (size_t)message.payloadLength);
+
   LoRa.endPacket();
 
+  serial.log(LogLevel::INFO, "Sending message:", message);
   dutyCycleManager.updateIntervalBetweenTx();
 
   /* Enable receiving, which is disabled when transmitting */
-  LoRa.receive();
+  // LoRa.receive();
 
   return true;
 }
 
-void LoraHandler::onReceive(int packetSize) {
-  if (packetSize == 0) {
-    serial.log(LogLevel::WARNING, "\"Received\" empty packet.");
+inline bool LoraHandler::packetNotEnded(uint8_t receivedBytes, int packetSize) {
+  return receivedBytes <= uint8_t(payload.size() - 1) &&
+         receivedBytes < lastReceived.payloadLength &&
+         Message::headerSize() + receivedBytes < packetSize;
+}
+
+void LoraHandler::storeMessage() {
+
+  int packetSize = LoRa.parsePacket();
+
+  if (packetSize == 0)
     return;
-  }
 
-  Message message;
+  lastReceived.destinationAddress = LoRa.read();
+  lastReceived.sourceAddress = LoRa.read();
+  lastReceived.id = ((uint16_t)LoRa.read() << 8) | (uint16_t)LoRa.read();
+  lastReceived.type = MessageType(LoRa.read());
+  lastReceived.payloadLength = LoRa.read();
 
-  message.destinationAddress = LoRa.read();
-  message.sourceAddress = LoRa.read();
-  message.id = ((uint16_t)LoRa.read() << 8) | (uint16_t)LoRa.read();
-  message.type = MessageType(LoRa.read());
-  message.payloadLength = LoRa.read();
-
-  message.payload = loraHandler.payload.data();
+  lastReceived.payload = payload.data();
 
   uint8_t receivedBytes = 0;
-  while (LoRa.available() &&
-         (receivedBytes < uint8_t(loraHandler.payload.size() - 1)) &&
-         receivedBytes < message.payloadLength) {
-    loraHandler.payload[receivedBytes++] = (uint8_t)LoRa.read();
+  while (packetNotEnded(receivedBytes, packetSize)) {
+    if (LoRa.available()) {
+      payload[receivedBytes++] = (uint8_t)LoRa.read();
+    } else {
+      serial.log(LogLevel::DEBUG, "Byte not read");
+    }
   }
 
-  while (LoRa.available())
-    LoRa.read();
-
-  if (message.payloadLength != receivedBytes) {
+  if (lastReceived.payloadLength != receivedBytes) {
     serial.log(LogLevel::ERROR, "Receiving error: declared message length ",
-               message.payloadLength, " does not match length ", receivedBytes);
+               lastReceived.payloadLength, " does not match length ",
+               receivedBytes);
+    lastReceived.payloadLength = 0;
+
+    serial.log(LogLevel::ERROR, "Received message (Payload omitted)",
+               lastReceived);
+
     return;
   }
 
-  if ((message.destinationAddress & localAddress) != localAddress) {
+  if ((lastReceived.destinationAddress & localAddress) != localAddress) {
     serial.log(
         LogLevel::WARNING,
         "Received message was not meant for local node, destination address:",
-        message.destinationAddress, ", dropping.");
+        lastReceived.destinationAddress, ", dropping.");
 
-    serial.log(LogLevel::DEBUG, "Local address: ", localAddress);
     return;
   }
 
-  loraHandler.lastReceived = message;
-  loraHandler._hasBeenRead = false;
+  serial.log(LogLevel::INFO, "Received message:", lastReceived);
+
+  _hasBeenRead = false;
 }
 
 void LoraHandler::setup(const LoRaConfig &config, void (*onReceive)(int)) {
   LoRa.setSyncWord(0x12);
   LoRa.setPreambleLength(8);
-  LoRa.onReceive(LoraHandler::onReceive);
 
   updateConfig(config);
 }
@@ -95,8 +107,6 @@ void LoraHandler::updateConfig(const LoRaConfig &config) {
   LoRa.setSpreadingFactor(config.spreadingFactor);
   LoRa.setCodingRate4(config.codingRate);
   LoRa.setTxPower(config.txPower, PA_OUTPUT_PA_BOOST_PIN);
-
-  LoRa.receive();
 }
 
 bool LoraHandler::canTransmit() { return dutyCycleManager.canTransmit(); }

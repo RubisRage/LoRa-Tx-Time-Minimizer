@@ -5,10 +5,17 @@
 
 enum MessageType : uint8_t {
   UNINITIALIZED,
-  CONFIG_REQ,
+  CONFIG_START,
+  CONFIG_END,
   CONFIG_SET,
+  CONFIG_ACK,
   ECHO_REQ,
   ECHO_REPLY
+};
+
+constexpr std::array<const char *, 7> messageTypesNames = {
+    "UNINITIALIZED", "CONFIG_START", "CONFIG_END", "CONFIG_SET",
+    "CONFIG_ACK",    "ECHO_REQ",     "ECHO_REPLY",
 };
 
 struct Message {
@@ -45,4 +52,8 @@ struct Message {
   Message(uint16_t count, MessageType type)
       : id(idPrefix | count), type(type), sourceAddress(localAddress),
         destinationAddress(remoteAddress), payload(nullptr), payloadLength(0) {}
+
+  static constexpr ssize_t headerSize() {
+    return sizeof(uint8_t) * 3 + sizeof(MessageType) + sizeof(uint16_t);
+  }
 };

@@ -1,4 +1,5 @@
 #include "types/LoRaConfig.hpp"
+#include "types/Message.hpp"
 #include <Arduino.h>
 #include <Logger/Logger.hpp>
 #include <algorithm>
@@ -41,10 +42,6 @@ void Logger::log(LogLevel level, const char *logMessage, const char *end) {
 void Logger::log(LogLevel level, const char *logMessage, Message message) {
   log(level, logMessage);
 
-  const char *types[] = {
-      "UNINITIALIZED", "CONFIG_REQ", "CONFIG_SET", "ECHO_REQ", "ECHO_REPLY",
-  };
-
   Serial.println("{");
   Serial.print("\t\tSender address: 0x");
   Serial.println(message.sourceAddress, HEX);
@@ -53,7 +50,9 @@ void Logger::log(LogLevel level, const char *logMessage, Message message) {
   Serial.print("\t\tMessage ID: 0x");
   Serial.println(message.id, HEX);
   Serial.print("\t\tMessage type: ");
-  Serial.println(types[message.type]);
+  Serial.println(message.type < messageTypesNames.size()
+                     ? messageTypesNames[message.type]
+                     : "[Unexpected message type]");
   Serial.print("\t\tPayload length: ");
   Serial.println(message.payloadLength);
   Serial.print("\t\tPayload: ");

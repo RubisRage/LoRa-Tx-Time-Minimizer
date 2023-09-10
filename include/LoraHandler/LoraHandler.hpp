@@ -47,10 +47,17 @@ public:
   Message getMessage();
   bool hasBeenRead();
 
+  /*
+   * Read and store last received message
+   */
+  void storeMessage();
+
 private:
+  bool packetNotEnded(uint8_t receivedBytes, int packetSize);
+
   std::array<uint8_t, 20> payload;
-  volatile Message lastReceived;
-  volatile bool _hasBeenRead;
+  Message lastReceived;
+  bool _hasBeenRead;
   DutyCycleManager dutyCycleManager;
 
   static void onReceive(int packetSize);

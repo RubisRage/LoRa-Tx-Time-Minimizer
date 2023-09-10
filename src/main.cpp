@@ -32,4 +32,7 @@ void setup() {
 #endif
 }
 
-void loop() { stateMachine.getState().execute(); }
+void loop() {
+  stateMachine.getState().execute();
+  loraHandler.storeMessage();
+}

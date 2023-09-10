@@ -1,6 +1,7 @@
 #include "globals/globals.hpp"
 #include <DutyCycleManager/DutyCycleManager.hpp>
 #include <Logger/Logger.hpp>
+#include <chrono>
 
 DutyCycleManager::DutyCycleManager(ArduinoClock::duration initialTxDelay)
     : lastTxBegin(), txBegin(), txDelay(initialTxDelay), dutyCycle() {}
@@ -31,9 +32,9 @@ void DutyCycleManager::updateIntervalBetweenTx() {
                previousTxDelay.count(), "ms, now is ", txDelay.count(), "ms");
   }
 
-  if (previousTxDelay != txDelay) {
-    TIMEOUT = txDelay * TIMEOUT_SCALE;
-  }
+  TIMEOUT = std::chrono::milliseconds(
+      int((std::max(previousTxDelay, txDelay)).count() * TIMEOUT_SCALE));
+  serial.log(LogLevel::INFO, "New timeout set to: ", TIMEOUT.count(), "ms");
 }
 
 bool DutyCycleManager::canTransmit() {
