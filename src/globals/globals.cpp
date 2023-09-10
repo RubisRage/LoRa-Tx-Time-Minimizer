@@ -1,7 +1,8 @@
-#include "types/LoraTypes.hpp"
+#include "types/LoRaConfig.hpp"
 #include <chrono>
 #include <globals/globals.hpp>
 
+const LoRaConfig defaultConfig(6, 10, 5, 2);
 LoRaConfig localNodeConf = defaultConfig;
 LoRaConfig lastNodeConf = defaultConfig;
 LoRaConfig nextNodeConf = defaultConfig;

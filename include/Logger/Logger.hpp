@@ -1,20 +1,12 @@
 #pragma once
 
+#include "types/LoRaConfig.hpp"
 #include <Arduino.h>
 #include <initializer_list>
-#include <types/LoraTypes.hpp>
 #include <types/Message.hpp>
 #include <types/State.hpp>
 
-enum LogLevel {
-  FAILURE,
-  ERROR,
-  WARNING,
-  INFORMATION,
-  STATISTICS,
-  TRANSITION,
-  DEBUG
-};
+enum LogLevel { FAILURE, ERROR, WARNING, INFO, STATISTICS, TRANSITION, DEBUG };
 
 class Logger {
 public:

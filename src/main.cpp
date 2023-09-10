@@ -11,7 +11,7 @@ void setup() {
   }
 
   serial.printLegend();
-  serial.log(LogLevel::INFORMATION, "Press s to start execution.");
+  serial.log(LogLevel::INFO, "Press s to start execution.");
 
   while (Serial.read() != 's') {
   }
@@ -24,11 +24,11 @@ void setup() {
   loraHandler.setup(defaultConfig, nullptr);
 
 #ifdef MASTER_BOARD
-  serial.log(LogLevel::INFORMATION, "MASTER SETUP CORRECTLY");
+  serial.log(LogLevel::INFO, "MASTER SETUP CORRECTLY");
 #endif
 
 #ifdef SLAVE_BOARD
-  serial.log(LogLevel::INFORMATION, "SLAVE SETUP CORRECTLY");
+  serial.log(LogLevel::INFO, "SLAVE SETUP CORRECTLY");
 #endif
 }
 

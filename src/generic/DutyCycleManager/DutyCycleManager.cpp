@@ -27,7 +27,7 @@ void DutyCycleManager::updateIntervalBetweenTx() {
 
   if (txDuration < 0.008f * (txDelay + txDuration)) {
     txDelay = txDuration * 100;
-    serial.log(LogLevel::INFORMATION, "Duty cycle under 0.8%, adjusting. Was",
+    serial.log(LogLevel::INFO, "Duty cycle under 0.8%, adjusting. Was",
                previousTxDelay.count(), "ms, now is ", txDelay.count(), "ms");
   }
 

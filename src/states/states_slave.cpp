@@ -1,9 +1,11 @@
 #include "states/states_slave.hpp"
 #include "LoRa.h"
 #include "Logger/Logger.hpp"
+#include "Timeout/Timeout.hpp"
 #include "states.hpp"
-#include "types/LoraTypes.hpp"
+#include "types/LoRaConfig.hpp"
 #include "types/Message.hpp"
+#include "types/State.hpp"
 #include <LoraHandler/LoraHandler.hpp>
 #include <globals/globals.hpp>
 
@@ -40,20 +42,29 @@ void testState(const State &current) {
 }
 
 void listenLoRaPackages(const State &current) {
-  if (loraHandler.hasBeenRead())
+  static Timeout timeout;
+
+  if (loraHandler.hasBeenRead()) {
+    if (timeout.hasTimedOut()) {
+      serial.log(LogLevel::ERROR, current, "Timed out");
+      stateMachine.transition(&SlaveStates::fallbackToDefault);
+    }
+
     return;
+  }
+
+  timeout.reset();
 
   Message message = loraHandler.getMessage();
 
-  serial.log(LogLevel::INFORMATION, "Received message:", message);
+  serial.log(LogLevel::INFO, "Received message:", message);
 
   switch (message.type) {
   case MessageType::ECHO_REQ:
     stateMachine.transition(&SlaveStates::sendEchoReply);
     break;
   case MessageType::CONFIG_REQ:
-    break;
-  case MessageType::FALLBACK_REQ:
+    stateMachine.transition(&SlaveStates::updateConfig);
     break;
   default:
     serial.log(LogLevel::ERROR, current, "Received non-request message.");
@@ -70,7 +81,48 @@ void sendEchoReply(const State &current) {
 
   loraHandler.send(echoReply);
 
-  serial.log(LogLevel::INFORMATION, "Sending echoReply: ", echoReply);
+  serial.log(LogLevel::INFO, "Sending echoReply: ", echoReply);
+
+  stateMachine.transition(&SlaveStates::listenLoRaPackages);
+}
+
+void updateConfig(const State &current) {
+  Message configRequest = loraHandler.getMessage();
+
+  LoRaConfig newConf(configRequest.payload);
+
+  serial.log(LogLevel::INFO, "Updating LoRa configuration to:", newConf);
+  loraHandler.updateConfig(newConf);
+  lastNodeConf = localNodeConf;
+  localNodeConf = newConf;
+
+  stateMachine.transition(&SlaveStates::sendConfigSet);
+}
+
+void sendConfigSet(const State &current) {
+  if (!loraHandler.canTransmit())
+    return;
+
+  Message configSet(msgCount++, MessageType::CONFIG_SET);
+
+  loraHandler.send(configSet);
+
+  serial.log(LogLevel::INFO, "Sending configSet:", configSet);
+
+  stateMachine.transition(&SlaveStates::listenLoRaPackages);
+}
+
+void fallbackToDefault(const State &current) {
+  serial.log(LogLevel::WARNING, "Falling back to default config!");
+
+  if (localNodeConf.bandwidthIndex == defaultConfig.bandwidthIndex &&
+      localNodeConf.spreadingFactor == defaultConfig.spreadingFactor) {
+    serial.log(LogLevel::FAILURE, "Already using default config!");
+    Fatal::exit();
+  }
+
+  loraHandler.updateConfig(defaultConfig);
+  localNodeConf = defaultConfig;
 
   stateMachine.transition(&SlaveStates::listenLoRaPackages);
 }
@@ -85,5 +137,14 @@ State SlaveStates::listenLoRaPackages = {.name = "Listen LoRa packages",
 
 State SlaveStates::sendEchoReply = {.name = "Send Echo Reply",
                                     .action = Actions::sendEchoReply};
+
+State SlaveStates::updateConfig = {.name = "Update config",
+                                   .action = Actions::updateConfig};
+
+State SlaveStates::sendConfigSet = {.name = "Send Config Set",
+                                    .action = Actions::sendConfigSet};
+
+State SlaveStates::fallbackToDefault = {.name = "Fallback to default config",
+                                        .action = Actions::fallbackToDefault};
 
 StateMachine stateMachine(&SlaveStates::listenLoRaPackages);

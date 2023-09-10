@@ -2,7 +2,7 @@
 
 #include <DutyCycleManager/DutyCycleManager.hpp>
 #include <cstdint>
-#include <types/LoraTypes.hpp>
+#include <types/LoRaConfig.hpp>
 #include <types/Message.hpp>
 
 class LoraHandler {

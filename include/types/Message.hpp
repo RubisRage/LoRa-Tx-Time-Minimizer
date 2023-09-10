@@ -4,13 +4,11 @@
 #include <globals/globals.hpp>
 
 enum MessageType : uint8_t {
-  STATUS,
-  CONFIG_REQ,
-  ECHO_REQ,
-  ECHO_REPLY,
-  FALLBACK_REQ,
-  ACK,
   UNINITIALIZED,
+  CONFIG_REQ,
+  CONFIG_SET,
+  ECHO_REQ,
+  ECHO_REPLY
 };
 
 struct Message {
@@ -45,6 +43,6 @@ struct Message {
   };
 
   Message(uint16_t count, MessageType type)
-      : id(idMask | count), type(type), sourceAddress(localAddress),
+      : id(idPrefix | count), type(type), sourceAddress(localAddress),
         destinationAddress(remoteAddress), payload(nullptr), payloadLength(0) {}
 };

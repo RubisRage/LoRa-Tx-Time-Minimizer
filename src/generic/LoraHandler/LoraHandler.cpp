@@ -21,7 +21,7 @@ bool LoraHandler::send(Message &message) {
 
   LoRa.write(message.destinationAddress);
   LoRa.write(message.sourceAddress);
-  LoRa.write((uint8_t)(message.id >> 7));
+  LoRa.write((uint8_t)(message.id >> 8));
   LoRa.write((uint8_t)(message.id & 0xFF));
   LoRa.write(message.type);
   LoRa.write(message.payloadLength);
@@ -46,7 +46,7 @@ void LoraHandler::onReceive(int packetSize) {
 
   message.destinationAddress = LoRa.read();
   message.sourceAddress = LoRa.read();
-  message.id = ((uint16_t)LoRa.read() << 7) | (uint16_t)LoRa.read();
+  message.id = ((uint16_t)LoRa.read() << 8) | (uint16_t)LoRa.read();
   message.type = MessageType(LoRa.read());
   message.payloadLength = LoRa.read();
 

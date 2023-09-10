@@ -1,4 +1,4 @@
-#include "types/LoraTypes.hpp"
+#include "types/LoRaConfig.hpp"
 #include <Arduino.h>
 #include <Logger/Logger.hpp>
 #include <algorithm>
@@ -42,7 +42,7 @@ void Logger::log(LogLevel level, const char *logMessage, Message message) {
   log(level, logMessage);
 
   const char *types[] = {
-      "STATUS", "CONFIG_REQ", "ECHO_REQ", "ECHO_REPLY", "FALLBACK_REQ", "ACK",
+      "UNINITIALIZED", "CONFIG_REQ", "CONFIG_SET", "ECHO_REQ", "ECHO_REPLY",
   };
 
   Serial.println("{");

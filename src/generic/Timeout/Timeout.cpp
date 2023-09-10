@@ -1,7 +1,8 @@
 #include "DutyCycleManager/ArduinoClock.hpp"
 #include <Timeout/Timeout.hpp>
+#include <globals/globals.hpp>
 
-Timeout::Timeout(const ArduinoClock::duration TIMEOUT) : TIMEOUT(TIMEOUT) {}
+Timeout::Timeout() : waitStarted(false) {}
 
 bool Timeout::hasTimedOut() {
   if (!waitStarted) {
