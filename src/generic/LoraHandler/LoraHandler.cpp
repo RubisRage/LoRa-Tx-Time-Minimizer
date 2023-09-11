@@ -100,6 +100,7 @@ void LoraHandler::storeMessage() {
 void LoraHandler::setup(const LoRaConfig &config, void (*onReceive)(int)) {
   LoRa.setSyncWord(0x12);
   LoRa.setPreambleLength(8);
+  LoRa.enableCrc();
 
   updateConfig(config);
 }
