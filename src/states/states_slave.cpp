@@ -69,6 +69,8 @@ void sendEchoReply(const State &current) {
     return;
   }
 
+  delay(500);
+
   Message echoReply(msgCount++, MessageType::ECHO_REPLY);
 
   loraHandler.send(echoReply);
