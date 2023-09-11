@@ -8,6 +8,13 @@ all:
 compiledb:
 				platformio run --target compiledb
 
+
+mupload:
+				platformio run --target upload -e master --upload-port /dev/ttyACM0
+
+supload:
+				platformio run --target upload -e slave --upload-port /dev/ttyACM0
+
 upload:
 				platformio run --target upload -e master
 				platformio run --target upload -e slave
