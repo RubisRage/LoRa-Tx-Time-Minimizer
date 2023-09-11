@@ -3,7 +3,8 @@
 #include <globals/globals.hpp>
 
 // const LoRaConfig defaultConfig(7, 7, 5, 2);
-const LoRaConfig defaultConfig(2, 10, 5, 4);
+const LoRaConfig defaultConfig(2, 10, 5, 5);
+// Works: const LoRaConfig defaultConfig(2, 10, 5, 4);
 LoRaConfig localNodeConf = defaultConfig;
 LoRaConfig lastNodeConf = defaultConfig;
 LoRaConfig nextNodeConf = defaultConfig;
