@@ -141,7 +141,7 @@ void computeNextConfig(const State &current) {
     serial.log(LogLevel::INFO, current,
                "RSSI and SNR within good connection range (Not excellent), "
                "transmission time minimization has ended.");
-    stateMachine.transition(&MasterStates::initialState);
+    stateMachine.transition(&MasterStates::sendConfigEnd);
   }
 }
 
