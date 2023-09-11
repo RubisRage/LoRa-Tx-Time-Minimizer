@@ -91,6 +91,8 @@ void LoraHandler::storeMessage() {
   }
 
   serial.log(LogLevel::INFO, "Received message:", lastReceived);
+  serial.log(LogLevel::INFO, "Packet RSSI:", LoRa.packetRssi(),
+             "SNR: ", LoRa.packetSnr());
 
   _hasBeenRead = false;
 }
