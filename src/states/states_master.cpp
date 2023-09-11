@@ -220,7 +220,11 @@ void waitConfigAck(const State &current) {
   if (loraHandler.hasBeenRead()) {
     if (timeout.hasTimedOut()) {
       serial.log(LogLevel::ERROR, current, "Timed out");
-      stateMachine.transition(&MasterStates::fallbackToPrevious);
+      if (hasFalledBack) {
+        stateMachine.transition(&MasterStates::fallbackOnTimeout);
+      } else {
+        stateMachine.transition(&MasterStates::fallbackToPrevious);
+      }
     }
 
     return;
@@ -243,6 +247,7 @@ void fallbackToPrevious(const State &current) {
   if (!loraHandler.canTransmit())
     return;
 
+  hasFalledBack = true;
   serial.log(LogLevel::INFO,
              "Downgrading LoRa configuration to:", lastNodeConf);
   loraHandler.updateConfig(lastNodeConf);
@@ -257,7 +262,12 @@ void waitFallbackConfigAck(const State &current) {
   if (loraHandler.hasBeenRead()) {
     if (timeout.hasTimedOut()) {
       serial.log(LogLevel::ERROR, current, "Timed out");
-      stateMachine.transition(&MasterStates::fallbackOnTimeout);
+
+      if (hasFalledBack) {
+        stateMachine.transition(&MasterStates::fallbackOnTimeout);
+      } else {
+        stateMachine.transition(&MasterStates::fallbackToPrevious);
+      }
     }
 
     return;
@@ -273,7 +283,7 @@ void waitFallbackConfigAck(const State &current) {
     Fatal::exit();
   }
 
-  stateMachine.transition(&MasterStates::initialState);
+  stateMachine.transition(&MasterStates::computeNextConfig);
 }
 
 void fallbackOnTimeout(const State &current) {
