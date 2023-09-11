@@ -103,8 +103,8 @@ void computeNextConfig(const State &current) {
   };
 
   // TODO: Make "good enough" range tighter
-  constexpr LoRaThresholds upper = {-100, -7.0};
-  constexpr LoRaThresholds lower = {-120, -13.0};
+  constexpr LoRaThresholds upper = {-115, -7.0};
+  constexpr LoRaThresholds lower = {-125, -13.0};
 
   int RSSI = LoRa.packetRssi();
   float SNR = LoRa.packetSnr();
