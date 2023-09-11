@@ -93,7 +93,7 @@ void sendConfigAck(const State &current) {
   if (!loraHandler.canTransmit())
     return;
 
-  delay(10);
+  delay(500);
 
   Message configSet(msgCount++, MessageType::CONFIG_ACK);
 
