@@ -1,0 +1,163 @@
+--- Logging an output to /home/rubisrage/Universidad/IoT/Practica3/practica3/logs/device-monitor-230911-204841.log
+--- Terminal on /dev/ttyACM0 | 115200 8-N-1
+--- Available filters and text transformations: colorize, debug, default, direct, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at https://bit.ly/pio-monitor-filters
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+20:48:41.339 > Log legend
+20:48:41.339 >
+20:48:41.339 >          (FF): Complete failure
+20:48:41.339 >          (EE): Error
+20:48:41.339 >          (WW): Warning
+20:48:41.339 >          (II): Information
+20:48:41.339 >          (SS): Statistics
+20:48:41.340 >          (TT): State transition
+20:48:41.340 >          (DD): Debug
+20:48:41.340 > (II) -> Press s to start execution.
+s20:48:41.813 > (II) -> MASTER SETUP CORRECTLY
+20:48:41.813 > Introduce command > echo
+(TT) -> Transitioning from " Initial state " to " Send echo request "
+20:48:44.203 > (II) -> Sending message:
+20:48:44.203 > {
+20:48:44.203 >          Sender address: 0xB0
+20:48:44.203 >          Recipient address: 0xB1
+20:48:44.203 >          Message ID: 0x8000
+20:48:44.203 >          Message type: ECHO_REQ
+20:48:44.203 >          Payload length: 0
+20:48:44.203 >          Payload:
+20:48:44.203 > }
+20:48:44.203 > (SS) -> Tx completed in 995 ms
+20:48:44.203 > (SS) -> Duty cycle is 2.97 %
+20:48:44.204 > (WW) -> Duty cycle exceeded 1%, adjusting. Was 10000 ms, now is  99500 ms
+20:48:44.204 > (II) -> New timeout set to:  248750 ms
+20:48:44.204 > (TT) -> Transitioning from " Send echo request " to " Wait echo reply "
+ [ INSERT ]
+ ╭─rubisrage@predator in repo: practica3 on  long-range-tests took 13s
+ ╰─λ pio device monitor -e slave -p /dev/ttyACM0
+--- Logging an output to /home/rubisrage/Universidad/IoT/Practica3/practica3/logs/device-monitor-230911-204858.log
+--- Terminal on /dev/ttyACM0 | 115200 8-N-1
+--- Available filters and text transformations: colorize, debug, default, direct, hexlify, log2file, nocontrol, printable, send_on_enter, time
+--- More details at https://bit.ly/pio-monitor-filters
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+20:48:58.771 > Log legend
+20:48:58.771 >
+20:48:58.771 >          (FF): Complete failure
+20:48:58.771 >          (EE): Error
+20:48:58.771 >          (WW): Warning
+20:48:58.771 >          (II): Information
+20:48:58.771 >          (SS): Statistics
+20:48:58.771 >          (TT): State transition
+20:48:58.772 >          (DD): Debug
+20:48:58.772 > (II) -> Press s to start execution.
+se20:49:00.768 > (II) -> MASTER SETUP CORRECTLY
+20:49:00.768 > Introduce command > cho
+(TT) -> Transitioning from " Initial state " to " Send echo request "
+20:49:08.347 > (II) -> Sending message:
+20:49:08.347 > {
+20:49:08.347 >          Sender address: 0xB0
+20:49:08.347 >          Recipient address: 0xB1
+20:49:08.347 >          Message ID: 0x8000
+20:49:08.347 >          Message type: ECHO_REQ
+20:49:08.347 >          Payload length: 0
+20:49:08.347 >          Payload:
+20:49:08.347 > }
+20:49:08.348 > (SS) -> Tx completed in 994 ms
+20:49:08.348 > (SS) -> Duty cycle is 9.94 %
+20:49:08.348 > (WW) -> Duty cycle exceeded 1%, adjusting. Was 10000 ms, now is  99400 ms
+20:49:08.349 > (II) -> New timeout set to:  248500 ms
+20:49:08.349 > (TT) -> Transitioning from " Send echo request " to " Wait echo reply "
+20:49:09.903 > (II) -> Received message:
+20:49:09.903 > {
+20:49:09.903 >          Sender address: 0xB1
+20:49:09.903 >          Recipient address: 0xB0
+20:49:09.903 >          Message ID: 0x0
+20:49:09.903 >          Message type: ECHO_REPLY
+20:49:09.903 >          Payload length: 0
+20:49:09.903 >          Payload:
+20:49:09.903 > }
+20:49:09.903 > (II) -> Packet RSSI: -110 SNR:  0.00
+20:49:09.904 > (TT) -> Transitioning from " Wait echo reply " to " Initial state "
+20:49:09.904 > Introduce command > minimize
+(TT) -> Transitioning from " Initial state " to " Send config start "
+20:50:47.770 > (II) -> Sending message:
+20:50:47.770 > {
+20:50:47.770 >          Sender address: 0xB0
+20:50:47.770 >          Recipient address: 0xB1
+20:50:47.770 >          Message ID: 0x8001
+20:50:47.770 >          Message type: CONFIG_START
+20:50:47.770 >          Payload length: 0
+20:50:47.770 >          Payload:
+20:50:47.770 > }
+20:50:47.771 > (SS) -> Tx completed in 994 ms
+20:50:47.771 > (SS) -> Duty cycle is 1.00 %
+20:50:47.771 > (II) -> New timeout set to:  248500 ms
+20:50:47.771 > (TT) -> Transitioning from " Send config start " to " Compute next config "
+20:50:47.773 > (II) -> Values used for configuration update: { RSSI: -110 , SNR:  0.00 }
+20:50:47.773 > (II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time.
+20:50:47.773 > (TT) -> Transitioning from " Compute next config " to " Send Config Request "
+20:52:27.199 > (II) -> Sending message:
+20:52:27.199 > {
+20:52:27.199 >          Sender address: 0xB0
+20:52:27.199 >          Recipient address: 0xB1
+20:52:27.199 >          Message ID: 0x8002
+20:52:27.199 >          Message type: CONFIG_SET
+20:52:27.199 >          Payload length: 2
+20:52:27.199 >          Payload: 7A A
+20:52:27.200 > }
+20:52:27.200 > (SS) -> Tx completed in 994 ms
+20:52:27.200 > (SS) -> Duty cycle is 1.00 %
+20:52:27.200 > (II) -> New timeout set to:  248500 ms
+20:52:27.200 > (II) -> Updating LoRa configuration to: { BW: 125000.00 kHz, SPF: 11, CR: 5, TxPwr: 7}
+20:52:27.203 > (TT) -> Transitioning from " Send Config Request " to " Wait Config Ack "
+20:56:35.757 > (EE) -> State(Wait Config Ack) Timed out
+20:56:35.758 > (TT) -> Transitioning from " Wait Config Ack " to " Fallback to previous config "
+20:56:35.758 > (II) -> Downgrading LoRa configuration to: { BW: 125000.00 kHz, SPF: 12, CR: 5, TxPwr: 7}
+20:56:35.760 > (TT) -> Transitioning from " Fallback to previous config " to " Compute next config "
+20:56:35.761 > (II) -> State(Compute next config) Failed to connect using last upgrade, ending minimization process.
+20:56:35.761 > (TT) -> Transitioning from " Compute next config " to " Send config end "
+20:56:35.762 > (II) -> Values used for configuration update: { RSSI: -110 , SNR:  2.00 }
+20:56:35.762 > (II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time.
+20:56:35.763 > (TT) -> Transitioning from " Send config end " to " Send Config Request "
+20:56:36.758 > (II) -> Sending message:
+20:56:36.758 > {
+20:56:36.758 >          Sender address: 0xB0
+20:56:36.758 >          Recipient address: 0xB1
+20:56:36.758 >          Message ID: 0x8003
+20:56:36.758 >          Message type: CONFIG_SET
+20:56:36.758 >          Payload length: 2
+20:56:36.758 >          Payload: 7A A
+20:56:36.758 > }
+20:56:36.758 > (SS) -> Tx completed in 995 ms
+20:56:36.759 > (SS) -> Duty cycle is 0.40 %
+20:56:36.759 > (II) -> New timeout set to:  248500 ms
+20:56:36.759 > (II) -> Updating LoRa configuration to: { BW: 125000.00 kHz, SPF: 11, CR: 5, TxPwr: 7}
+20:56:36.762 > (TT) -> Transitioning from " Send Config Request " to " Wait Config Ack "
+20:56:37.807 > (II) -> Received message:
+20:56:37.807 > {
+20:56:37.807 >          Sender address: 0xB1
+20:56:37.807 >          Recipient address: 0xB0
+20:56:37.807 >          Message ID: 0x2
+20:56:37.807 >          Message type: CONFIG_ACK
+20:56:37.807 >          Payload length: 0
+20:56:37.807 >          Payload:
+20:56:37.807 > }
+20:56:37.807 > (II) -> Packet RSSI: -112 SNR:  1.50
+20:56:37.808 > (TT) -> Transitioning from " Wait Config Ack " to " Compute next config "
+20:56:37.809 > (II) -> Values used for configuration update: { RSSI: -112 , SNR:  1.50 }
+20:56:37.810 > (II) -> State(Compute next config) RSSI and SNR above threshold, improving transmission time.
+20:56:37.810 > (TT) -> Transitioning from " Compute next config " to " Send Config Request "
+20:58:15.673 > (II) -> Sending message:
+20:58:15.673 > {
+20:58:15.673 >          Sender address: 0xB0
+20:58:15.673 >          Recipient address: 0xB1
+20:58:15.673 >          Message ID: 0x8004
+20:58:15.673 >          Message type: CONFIG_SET
+20:58:15.673 >          Payload length: 2
+20:58:15.673 >          Payload: 78 A
+20:58:15.673 > }
+20:58:15.673 > (SS) -> Tx completed in 499 ms
+20:58:15.674 > (SS) -> Duty cycle is 0.50 %
+20:58:15.674 > (II) -> Duty cycle under 0.8%, adjusting. Was 99400 ms, now is  49900 ms
+20:58:15.674 > (II) -> New timeout set to:  248500 ms
+20:58:15.675 > (II) -> Updating LoRa configuration to: { BW: 125000.00 kHz, SPF: 10, CR: 5, TxPwr: 7}
+20:58:15.677 > (TT) -> Transitioning from " Send Config Request " to " Wait Config Ack "
+
