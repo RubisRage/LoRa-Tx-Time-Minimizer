@@ -1,0 +1,49 @@
+20:52:28.250 > (SS) -> Tx completed in 500 ms 
+20:52:28.250 > (SS) -> Duty cycle is 0.25 % 
+20:52:28.250 > (II) -> Duty cycle under 0.8%, adjusting. Was 99500 ms, now is  50000 ms 
+20:52:28.250 > (II) -> New timeout set to:  199000 ms 
+20:52:28.250 > (TT) -> Transitioning from " Send Config ACK " to " Wait on configSet (or configEnd) " 
+20:55:47.249 > (EE) -> State(Wait on configSet (or configEnd)) Timed out 
+20:55:47.250 > (TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Fallback to previous config " 
+20:55:47.250 > (WW) -> Falling back to previous config!
+20:55:47.251 > (II) -> Config set: { BW: 125000.00 kHz, SPF: 12, CR: 5, TxPwr: 7}
+20:55:47.252 > (TT) -> Transitioning from " Fallback to previous config " to " Wait on configSet (or configEnd) " 
+20:56:36.802 > (II) -> Received message:
+20:56:36.802 > {
+20:56:36.802 > 		Sender address: 0xB0
+20:56:36.802 > 		Recipient address: 0xB1
+20:56:36.802 > 		Message ID: 0x8003
+20:56:36.802 > 		Message type: CONFIG_SET
+20:56:36.802 > 		Payload length: 2
+20:56:36.802 > 		Payload: 7A A 
+20:56:36.802 > }
+20:56:36.803 > (II) -> Packet RSSI: -113 SNR:  -0.75 
+20:56:36.803 > (TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Update config " 
+20:56:36.804 > (II) -> Updating LoRa configuration to: { BW: 125000.00 kHz, SPF: 11, CR: 5, TxPwr: 7}
+20:56:36.806 > (TT) -> Transitioning from " Update config " to " Send Config ACK " 
+20:56:37.807 > (II) -> Sending message:
+20:56:37.808 > {
+20:56:37.808 > 		Sender address: 0xB1
+20:56:37.808 > 		Recipient address: 0xB0
+20:56:37.808 > 		Message ID: 0x2
+20:56:37.808 > 		Message type: CONFIG_ACK
+20:56:37.808 > 		Payload length: 0
+20:56:37.808 > 		Payload: 
+20:56:37.808 > }
+20:56:37.808 > (SS) -> Tx completed in 500 ms 
+20:56:37.808 > (SS) -> Duty cycle is 0.20 % 
+20:56:37.808 > (II) -> New timeout set to:  100000 ms 
+20:56:37.808 > (TT) -> Transitioning from " Send Config ACK " to " Wait on configSet (or configEnd) " 
+20:58:17.795 > (EE) -> State(Wait on configSet (or configEnd)) Timed out 
+20:58:17.796 > (TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Fallback to previous config " 
+20:58:17.797 > (WW) -> Falling back to previous config!
+20:58:17.797 > (II) -> Config set: { BW: 125000.00 kHz, SPF: 12, CR: 5, TxPwr: 7}
+20:58:17.799 > (TT) -> Transitioning from " Fallback to previous config " to " Wait on configSet (or configEnd) " 
+20:59:57.779 > (EE) -> State(Wait on configSet (or configEnd)) Timed out 
+20:59:57.780 > (TT) -> Transitioning from " Wait on configSet (or configEnd) " to " Fallback to previous config " 
+20:59:57.781 > (WW) -> Falling back to previous config!
+20:59:57.781 > (WW) -> Local config is already previous config!
+20:59:57.781 > (TT) -> Transitioning from " Fallback to previous config " to " Fallback to default config " 
+20:59:57.781 > (WW) -> Falling back to default config!
+20:59:57.781 > (WW) -> Already using default config!
+20:59:57.782 > (TT) -> Transitioning from " Fallback to default config " to " Listen LoRa packages "

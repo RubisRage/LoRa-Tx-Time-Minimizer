@@ -17,7 +17,7 @@
 
 namespace Actions {
 
-bool hasFalledBack = false;
+int tryouts = 0;
 
 void testAction(const State &current) {
 
@@ -87,8 +87,8 @@ void waitEchoReply(const State &current) {
 
 void computeNextConfig(const State &current) {
 
-  if (hasFalledBack) {
-    hasFalledBack = false;
+  if (tryouts > 1) {
+    tryouts = 0;
 
     serial.log(
         LogLevel::INFO, current,
@@ -102,7 +102,6 @@ void computeNextConfig(const State &current) {
     float snr;
   };
 
-  // TODO: Make "good enough" range tighter
   constexpr LoRaThresholds upper = {-115, -7.0};
   constexpr LoRaThresholds lower = {-120, -13.0};
 
@@ -247,6 +246,7 @@ void fallbackToPrevious(const State &current) {
              "Downgrading LoRa configuration to:", lastNodeConf);
   loraHandler.updateConfig(lastNodeConf);
   localNodeConf = lastNodeConf;
+  tryouts++;
 
   stateMachine.transition(&MasterStates::computeNextConfig);
 }
@@ -257,7 +257,7 @@ void waitFallbackConfigAck(const State &current) {
   if (loraHandler.hasBeenRead()) {
     if (timeout.hasTimedOut()) {
       serial.log(LogLevel::ERROR, current, "Timed out");
-      stateMachine.transition(&MasterStates::fallbackOnTimeout);
+      stateMachine.transition(&MasterStates::fallbackToDefault);
     }
 
     return;
@@ -276,11 +276,12 @@ void waitFallbackConfigAck(const State &current) {
   stateMachine.transition(&MasterStates::initialState);
 }
 
-void fallbackOnTimeout(const State &current) {
+void fallbackToDefault(const State &current) {
   serial.log(LogLevel::WARNING, current, "Falling back to default config!");
 
   loraHandler.updateConfig(defaultConfig);
   localNodeConf = defaultConfig;
+  tryouts = 0;
 
   stateMachine.transition(&MasterStates::initialState);
 }
@@ -316,9 +317,9 @@ State MasterStates::waitFallbackConfigAck = {
     .name = "Wait Fallback Config Set",
     .action = Actions::waitFallbackConfigAck};
 
-State MasterStates::fallbackOnTimeout = {.name =
+State MasterStates::fallbackToDefault = {.name =
                                              "Fallback to default (Timeout)",
-                                         .action = Actions::fallbackOnTimeout};
+                                         .action = Actions::fallbackToDefault};
 
 State MasterStates::sendConfigStart = {.name = "Send config start",
                                        .action = Actions::sendConfigStart};

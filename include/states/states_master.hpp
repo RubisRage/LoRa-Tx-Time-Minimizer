@@ -14,5 +14,5 @@ extern State sendConfigEnd;
 extern State waitConfigAck;
 extern State fallbackToPrevious;
 extern State waitFallbackConfigAck;
-extern State fallbackOnTimeout;
+extern State fallbackToDefault;
 } // namespace MasterStates
