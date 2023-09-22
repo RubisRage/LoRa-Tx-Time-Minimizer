@@ -17,8 +17,6 @@
 
 namespace Actions {
 
-int tryouts = 0;
-
 void testAction(const State &current) {
 
   static uint16_t msgCount = 0;
@@ -87,16 +85,6 @@ void waitEchoReply(const State &current) {
 
 void computeNextConfig(const State &current) {
 
-  if (tryouts > 1) {
-    tryouts = 0;
-
-    serial.log(
-        LogLevel::INFO, current,
-        "Failed to connect using last upgrade, ending minimization process.");
-
-    stateMachine.transition(&MasterStates::sendConfigEnd);
-  }
-
   struct LoRaThresholds {
     int rssi;
     float snr;
@@ -135,7 +123,7 @@ void computeNextConfig(const State &current) {
     serial.log(LogLevel::INFO, current,
                "RSSI and/or SNR below threshold. Falling back to previous "
                "configuration.");
-    stateMachine.transition(&MasterStates::fallbackToPrevious);
+    stateMachine.transition(&MasterStates::sendFallbackConfig);
   } else {
     serial.log(LogLevel::INFO, current,
                "RSSI and SNR within good connection range (Not excellent), "
@@ -239,6 +227,13 @@ void waitConfigAck(const State &current) {
 }
 
 void fallbackToPrevious(const State &current) {
+  static int tryouts = 0;
+
+  if (tryouts >= MAX_TRYOUTS) {
+    tryouts = 0;
+    stateMachine.transition(&MasterStates::fallbackToDefault);
+  }
+
   if (!loraHandler.canTransmit())
     return;
 
@@ -251,13 +246,33 @@ void fallbackToPrevious(const State &current) {
   stateMachine.transition(&MasterStates::computeNextConfig);
 }
 
+void sendFallbackConfig(const State &current) {
+  if (!loraHandler.canTransmit())
+    return;
+
+  std::array<uint8_t, 2> payload;
+  lastNodeConf.serialize(payload);
+
+  Message configRequest(msgCount++, MessageType::CONFIG_SET);
+  configRequest.payload = payload.data();
+  configRequest.payloadLength = payload.size();
+
+  loraHandler.send(configRequest);
+
+  serial.log(LogLevel::INFO, "Updating LoRa configuration to:", nextNodeConf);
+  loraHandler.updateConfig(lastNodeConf);
+  localNodeConf = lastNodeConf;
+
+  stateMachine.transition(&MasterStates::waitFallbackConfigAck);
+}
+
 void waitFallbackConfigAck(const State &current) {
   static Timeout timeout;
 
   if (loraHandler.hasBeenRead()) {
     if (timeout.hasTimedOut()) {
       serial.log(LogLevel::ERROR, current, "Timed out");
-      stateMachine.transition(&MasterStates::fallbackToDefault);
+      stateMachine.transition(&MasterStates::fallbackToPrevious);
     }
 
     return;
@@ -265,15 +280,17 @@ void waitFallbackConfigAck(const State &current) {
 
   timeout.reset();
 
-  Message fallbackSet = loraHandler.getMessage();
+  Message fallbackAck = loraHandler.getMessage();
 
-  if (fallbackSet.type != MessageType::CONFIG_ACK) {
+  if (fallbackAck.type != MessageType::CONFIG_ACK) {
     serial.log(LogLevel::FAILURE, current, "Received wrong message type!");
-    serial.log(LogLevel::FAILURE, "Received message:", fallbackSet);
+    serial.log(LogLevel::FAILURE, "Received message:", fallbackAck);
     Fatal::exit();
   }
 
-  stateMachine.transition(&MasterStates::initialState);
+  serial.log(LogLevel::INFO, current, "Fallback request completed!");
+
+  stateMachine.transition(&MasterStates::sendConfigEnd);
 }
 
 void fallbackToDefault(const State &current) {
@@ -281,7 +298,6 @@ void fallbackToDefault(const State &current) {
 
   loraHandler.updateConfig(defaultConfig);
   localNodeConf = defaultConfig;
-  tryouts = 0;
 
   stateMachine.transition(&MasterStates::initialState);
 }
@@ -325,5 +341,7 @@ State MasterStates::sendConfigStart = {.name = "Send config start",
                                        .action = Actions::sendConfigStart};
 State MasterStates::sendConfigEnd = {.name = "Send config end",
                                      .action = Actions::sendConfigEnd};
+State MasterStates::sendFallbackConfig = {
+    .name = "Send config end", .action = Actions::sendFallbackConfig};
 
 StateMachine stateMachine(&MasterStates::initialState);

@@ -13,6 +13,7 @@ extern State sendConfigStart;
 extern State sendConfigEnd;
 extern State waitConfigAck;
 extern State fallbackToPrevious;
+extern State sendFallbackConfig;
 extern State waitFallbackConfigAck;
 extern State fallbackToDefault;
 } // namespace MasterStates

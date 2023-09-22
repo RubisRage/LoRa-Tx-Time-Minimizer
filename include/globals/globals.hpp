@@ -19,8 +19,9 @@ constexpr float TIMEOUT_SCALE = 2.0;
 #endif
 
 constexpr auto INITIAL_INTERVAL_BETWEEN_TX = std::chrono::milliseconds(10000);
-
 extern ArduinoClock::duration TIMEOUT;
+
+constexpr int MAX_TRYOUTS = 2;
 
 extern const LoRaConfig defaultConfig;
 extern LoRaConfig localNodeConf;
